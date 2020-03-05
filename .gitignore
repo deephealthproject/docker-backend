@@ -3,4 +3,5 @@
 .DS_Store
 .secrets.json
 venv
+docker-compose.yml
 docker/src
