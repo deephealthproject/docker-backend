@@ -1,0 +1,63 @@
+version: '2.4'
+services:
+
+  app:
+    build:
+      context: docker
+      args:
+        DOCKER_LIBS_IMAGE: ${DOCKER_LIBS_IMAGE}
+        UID: ${UID}
+        GID: ${GID}
+    image: &app "dhealth/backend"
+    restart: "no"
+    user: "${UID}:${GID}"
+    runtime: ${DOCKER_RUNTIME}
+    command: ["start.sh","backend"]
+    env_file: &envfile
+      - settings.conf
+    environment:
+      - PYTHONPATH="$PYTHONPATH:.%"
+    ports:
+      - "${BACKEND_PORT}:8000"
+    volumes:
+      ${BACKEND_VOLUME}
+      - ./.secrets.json:/app/secrets.json
+      - ./settings.conf:/app/settings.conf
+    depends_on:
+      - broker
+
+  worker:
+    build: docker
+    image: *app
+    restart: "no"
+    user: "${UID}:${GID}"
+    env_file: *envfile
+    environment:
+      - PYTHONPATH="$PYTHONPATH:.%"
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+      - RABBITMQ_HOST=broker
+      - RABBITMQ_PORT=5672
+    command: ["start.sh","celery"]
+    volumes:
+      ${BACKEND_VOLUME}
+      - ./.secrets.json:/app/secrets.json
+      - ./settings.conf:/app/settings.conf
+    depends_on:
+      - broker
+    
+  flower:
+    image: zoomeranalytics/flower:0.9.1-4.0.2
+    restart: "no"
+    env_file: *envfile
+    environment:
+      - FLOWER_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+    ports:
+      - "${FLOWER_PORT}:5555"
+    depends_on:
+      - broker
+
+  broker:
+    image: rabbitmq:3
+    env_file: *envfile
+#    ports:
+#      - 5672:5672
