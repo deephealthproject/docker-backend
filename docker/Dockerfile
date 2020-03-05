@@ -2,6 +2,11 @@
 ARG DOCKER_LIBS_IMAGE
 FROM ${DOCKER_LIBS_IMAGE}
 
+# Set image user
+ARG UID=1000
+ARG GID=1000
+ARG USERNAME=backend
+
 # Set the path where the app will be installed
 ENV APP_PATH "/app"
 
@@ -21,6 +26,13 @@ RUN \
     # set python3 as default Python interpreter
     update-alternatives --install /usr/bin/python python /usr/bin/python3 10\
     # set proper permissions for utility scripts
-    && chmod +x /usr/local/bin/init.sh /usr/local/bin/start.sh /usr/local/bin/wait-for-init.sh \
+    && chmod +x /usr/local/bin/init.sh /usr/local/bin/start.sh /usr/local/bin/wait-for-it.sh \
     # install app requirements
-    && pip --no-cache-dir install -r requirements.txt
+    && pip --no-cache-dir install -r requirements.txt \
+    # create the user
+    && groupadd ${USERNAME} -g ${GID} || true \
+    && useradd -m -u ${UID} -g ${GID} ${USERNAME} \
+    && chown -R ${USERNAME} ${APP_PATH}
+
+# Set the default user
+USER ${USERNAME}
