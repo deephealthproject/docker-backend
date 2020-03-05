@@ -16,7 +16,7 @@ COPY src ${APP_PATH}
 # Copy utility scripts
 COPY init.sh /usr/local/bin/
 COPY start.sh /usr/local/bin/
-COPY wait-for-init.sh /usr/local/bin/
+COPY wait-for-it.sh /usr/local/bin/
 
 # Set the current WorkDIR
 WORKDIR ${APP_PATH}

@@ -13,6 +13,7 @@ if [[ "${command}" == "backend" ]]; then
   init.sh
   python manage.py runserver "0.0.0.0:${BACKEND_PORT}"
 elif [[ "${command}" == "celery" ]]; then
+  wait-for-it.sh -h "${RABBITMQ_HOST}" -p "${RABBITMQ_PORT}"
   python manage.py celery
 else
   /bin/bash "$@"
