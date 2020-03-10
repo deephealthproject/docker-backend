@@ -12,6 +12,9 @@ set -a
 source "${SETTINGS_FILE}"
 set +a
 
+set -o errexit
+set -o nounset
+
 # shellcheck disable=SC2034 ## used by envsubst
 export CELERY_KEY=$(\
 docker run -it --rm "${DOCKER_BACKEND_IMAGE}" \

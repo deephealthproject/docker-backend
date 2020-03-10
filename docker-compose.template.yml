@@ -45,16 +45,16 @@ services:
     depends_on:
       - broker
     
-  flower:
-    image: zoomeranalytics/flower:0.9.1-4.0.2
-    restart: "no"
-    env_file: *envfile
-    environment:
-      - FLOWER_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
-    ports:
-      - "${FLOWER_PORT}:5555"
-    depends_on:
-      - broker
+  # flower:
+  #   image: zoomeranalytics/flower:0.9.1-4.0.2
+  #   restart: "no"
+  #   env_file: *envfile
+  #   environment:
+  #     - FLOWER_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+  #   ports:
+  #     - "${FLOWER_PORT}:5555"
+  #   depends_on:
+  #     - broker
 
   broker:
     image: rabbitmq:3
