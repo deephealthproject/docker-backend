@@ -43,3 +43,6 @@ RUN \
 
 # Set the default user
 USER ${USERNAME}
+
+# Default command
+CMD start.sh backend
