@@ -29,11 +29,11 @@ spec:
             - name: DJANGO_ENV
               value: "/app/.env/config"
             - name: ADMIN_USER
-              value: "{{ .Values.global.backend.admin.username }}"
+              value: "{{ .Values.backend.admin.username }}"
             - name: ADMIN_PASSWORD
-              value: "{{ .Values.global.backend.admin.password }}"
+              value: "{{ .Values.backend.admin.password }}"
             - name: ADMIN_EMAIL
-              value: "{{ .Values.global.backend.admin.email }}"
+              value: "{{ .Values.backend.admin.email }}"
           volumeMounts:
             - name: backend-secrets
               mountPath: "/app/.env"
@@ -42,7 +42,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/bash","-c"]
-          args: ["python manage.py runserver 0.0.0.0:{{ .Values.global.backend.port }}"]
+          args: ["python manage.py runserver 0.0.0.0:{{ .Values.backend.service.containerPort }}"]
           # envFrom:
           #   - secretRef:
           #       name: backend-secrets
@@ -54,7 +54,7 @@ spec:
               mountPath: "/app/.env"
           ports:
             - name: backend-port
-              containerPort: {{ .Values.global.backend.port }}
+              containerPort: {{ .Values.backend.service.containerPort }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -65,21 +65,21 @@ spec:
           #     path: /
           #     port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.backend.resources | nindent 12 }}
       volumes:
         - name: backend-secrets
           secret:
             secretName: backend-secrets
             defaultMode: 0644
-    {{- with .Values.nodeSelector }}
+    {{- with .Values.backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.affinity }}
+    {{- with .Values.backend.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
+    {{- with .Values.backend.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}

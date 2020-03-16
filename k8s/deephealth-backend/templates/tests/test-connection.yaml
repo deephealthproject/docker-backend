@@ -14,5 +14,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args:  ['{{ include "deephealth-backend.fullname" . }}:{{ .Values.service.port }}']
+      args:  ['{{ include "deephealth-backend.fullname" . }}:{{ .Values.backend.service.port }}']
   restartPolicy: Never

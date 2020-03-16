@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.backend.ingress.enabled -}}
 {{- $fullName := include "deephealth-backend.fullname" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -9,14 +9,14 @@ metadata:
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.backend.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-{{- if .Values.ingress.tls }}
+{{- if .Values.backend.ingress.tls }}
   tls:
-  {{- range .Values.ingress.tls }}
+  {{- range .Values.backend.ingress.tls }}
     - hosts:
       {{- range .hosts }}
         - {{ . | quote }}
@@ -25,7 +25,7 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .Values.ingress.hosts }}
+  {{- range .Values.backend.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
