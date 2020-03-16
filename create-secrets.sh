@@ -1,7 +1,13 @@
 #!/bin/bash
 
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# move to the script path
+# all paths are assumed to be absolute or relative to this path
+cd ${SCRIPT_PATH}
+
 # set target path from arguments
-SECRETS_FILE="${1:-.secrets.json}"
+SECRETS_FILE="${1:-${SCRIPT_PATH}/.secrets.json}"
 
 # set settings filename
 SETTINGS_FILE=${SETTINGS_FILE:-"settings.conf"}
@@ -21,4 +27,4 @@ docker run -it --rm "${DOCKER_BACKEND_IMAGE}" \
 python3 -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())' | tr -d '[:space:]')
 
 # generate secrets from template
-envsubst < secrets-template.json > "${SECRETS_FILE}"
+envsubst < ${SCRIPT_PATH}/secrets-template.json > "${SECRETS_FILE}"
