@@ -7,6 +7,10 @@ ARG UID=1000
 ARG GID=1000
 ARG USERNAME=backend
 
+# Set defaults
+ARG BACKEND_PORT=8000
+ENV BACKEND_PORT ${BACKEND_PORT} 
+
 # Set the path where the app will be installed
 ENV APP_PATH "/app"
 
