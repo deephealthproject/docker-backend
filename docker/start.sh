@@ -9,8 +9,6 @@ if [[ ! "${command}" =~ ^(backend|celery|bash)$ ]]; then
 fi
 
 if [[ "${command}" == "backend" ]]; then
-  source "${APP_PATH}/settings.conf"
-  init.sh
   python manage.py runserver "0.0.0.0:${BACKEND_PORT}"
 elif [[ "${command}" == "celery" ]]; then
   wait-for-it.sh -h "${RABBITMQ_HOST}" -p "${RABBITMQ_PORT}"
