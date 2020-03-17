@@ -23,8 +23,8 @@ spec:
         - name: {{ .Chart.Name }}-init
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/bin/bash","-c","printenv && init.sh"]
-          #args: [""]
+          command: ["/bin/sh","-c"]
+          args: ["wait-for-it.sh -h {{ .Release.Name }}-postgresql -p {{ .Values.postgresql.service.port }} && init.sh"]
           env:
             - name: DJANGO_ENV
               value: "/app/.env/config"
@@ -43,9 +43,6 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/bash","-c"]
           args: ["python manage.py runserver 0.0.0.0:{{ .Values.backend.service.containerPort }}"]
-          # envFrom:
-          #   - secretRef:
-          #       name: backend-secrets
           env:
             - name: DJANGO_ENV
               value: "/app/.env/config"

@@ -2,14 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global:
-  debug: &debug True
-  storageClass: default
-
 replicaCount: 1
 
 image:
-  repository: 
+  repository: <DEFAULT_IMAGE>
   tag: latest
   pullPolicy: Always
 
@@ -34,7 +30,7 @@ backend:
       kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
     hosts:
-      - host: 
+      - host: <YOUR_K8S_SERVER>
 
     tls: []
     #  - secretName: chart-example-tls
@@ -64,6 +60,16 @@ backend:
 
   affinity: {}
 
+
+global:
+  debug: &debug True
+  # persistence class
+  storageClass: default
+  # # PostgreSQL settings
+  # postgresql:
+  #   postgresqlDatabase: db
+  #   postgresqlUsername: user
+  #   postgresqlPassword: password
 
 # Celery settings
 celery:
@@ -110,8 +116,8 @@ celery:
   affinity: {}
 
 
-# RabbitMQ settings. 
-# all available options are available at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
+# RabbitMQ settings. You can find all the available settings 
+# at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
 broker: &broker
   image:
     debug: *debug
@@ -143,3 +149,37 @@ broker: &broker
 
 # Copy broker properties as values of the subchart RabbitMQ
 rabbitmq: *broker
+
+
+# PostgreSQL settings.
+# You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
+postgresql:
+  # DB
+  postgresqlDatabase: db
+  # credentials
+  postgresqlUsername: user
+  postgresqlPassword: password
+
+  image:
+    debug: *debug
+
+  service:
+    port: 5432
+
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}

@@ -24,8 +24,8 @@ stringData:
     ALLOWED_HOSTS="localhost,127.0.0.1,{{ (index .Values.backend.ingress.hosts 0).host }}"
 
     # Database connection settings
-    DATABASE_URL=sqlite:///my-local-sqlite.db # SQLite DB
-    #DATABASE_URL=psql://urser:password@127.0.0.1:8458/database # PostgreSQL DB
+    #DATABASE_URL=sqlite:///my-local-sqlite.db # SQLite DB
+    DATABASE_URL=psql://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ .Release.Name }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
 
     # Relative path for static resources
     STATIC_URL='/backend/static/'
