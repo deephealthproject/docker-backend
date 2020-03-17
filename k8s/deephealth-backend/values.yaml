@@ -3,43 +3,127 @@
 # Declare variables to be passed into your templates.
 
 global:
-  backend:
-    admin:
-      username: admin
-      password: admin
-      email: kikkomep@tiscali.it
-    port: 8000
-  celery:
-    port: 5432
+  debug: &debug True
+  storageClass: default
 
 replicaCount: 1
 
 image:
-  repository: kikkomep/dhb
+  repository: 
   tag: latest
   pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
 
-service:
-  type: ClusterIP
-  port: 80
+# Backend settings
+backend:
+  admin:
+    username: admin
+    password: admin
+    #email: admin@domain.it
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: django.backend.172.30.10.101.nip.io
+  service:
+    type: ClusterIP
+    port: 80
+    containerPort: 8000
 
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: 
 
-resources: {}
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # To use GPU you need to install 
+    # https://github.com/NVIDIA/k8s-device-plugin) 
+    # on your k8s Cluster 
+    # limits:
+    #   nvidia.com/gpu: 2 # requesting 2 GPUs
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+
+# Celery settings
+celery:
+  
+  service:
+    # type: ClusterIP
+    # port: 80
+    containerPort: 5432
+
+  # ingress:
+  #   enabled: true
+  #   annotations:
+  #     kubernetes.io/ingress.class: nginx
+  #     # kubernetes.io/tls-acme: "true"
+  #   hosts:
+  #     - host: celery.backend.172.30.10.101.nip.io
+
+  #   tls: []
+  #   #  - secretName: chart-example-tls
+  #   #    hosts:
+  #   #      - chart-example.local
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # To use GPU you need to install 
+    # https://github.com/NVIDIA/k8s-device-plugin) 
+    # on your k8s Cluster 
+    # limits:
+    #   nvidia.com/gpu: 2 # requesting 2 GPUs
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+
+# RabbitMQ settings. 
+# all available options are available at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
+broker: &broker
+  image:
+    debug: *debug
+  
+  rabbitmq:
+    username: user
+    password: password
+  
+  service:
+    port: 5672
+  
+  resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -50,14 +134,12 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-  # To use GPU you need to install 
-  # https://github.com/NVIDIA/k8s-device-plugin) 
-  # on your k8s Cluster 
-  # limits:
-  #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
-nodeSelector: {}
+  nodeSelector: {}
 
-tolerations: []
+  tolerations: []
 
-affinity: {}
+  affinity: {}
+
+# Copy broker properties as values of the subchart RabbitMQ
+rabbitmq: *broker
