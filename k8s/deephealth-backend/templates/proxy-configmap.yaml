@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: {{ include "deephealth-backend.fullname" . }}-nginx-proxy-config
   labels:
     app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}

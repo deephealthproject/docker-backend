@@ -102,7 +102,7 @@ nginx:
     port: 80
     #httpsPort: 443
 
-  serverBlockConfigMap: nginx-config
+  serverBlockConfigMap: proxy-config
 
   ingress:
     # enabled: false
