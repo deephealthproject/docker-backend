@@ -1,5 +1,6 @@
 {{- if .Values.backend.ingress.enabled -}}
 {{- $fullName := include "deephealth-backend.fullname" . -}}
+{{- $releaseName := .Release.Name -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -29,9 +30,13 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          - path: /
+          - path: {{ .path | default "/" }}
             backend:
-              serviceName: {{ $fullName }}
-              servicePort: backend-port
+              {{- if .serviceName }}
+              serviceName: {{ $releaseName }}-{{ .serviceName }}
+              {{- else }}
+              serviceName: $fullName
+              {{- end}}
+              servicePort: {{ .servicePort | default "backend-port" }}
   {{- end }}
 {{- end }}
