@@ -24,7 +24,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh","-c"]
-          args: ["wait-for-it.sh -h {{ .Release.Name }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
+          args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
           env:
             - name: DJANGO_ENV
               value: "/app/config"

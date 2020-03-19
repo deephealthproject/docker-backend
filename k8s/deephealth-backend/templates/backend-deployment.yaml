@@ -24,7 +24,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh","-c"]
-          args: ["wait-for-it.sh -h {{ .Release.Name }}-postgresql -p {{ .Values.postgresql.service.port }} && init.sh"]
+          args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-postgresql -p {{ .Values.postgresql.service.port }} && init.sh"]
           env:
             - name: DJANGO_ENV
               value: "/app/config"
