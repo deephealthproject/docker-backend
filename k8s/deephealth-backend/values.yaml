@@ -5,6 +5,15 @@
 nameOverride: "deephealth-backend"
 fullnameOverride: ""
 
+# Set Django secret
+djangoSecret: ""
+
+# Set data paths
+dataPaths:
+  datasets: 'data/datasets'
+  training: 'data/training'
+  inference: 'data/inference'
+
 # global settings
 global:
   debug: &debug True
@@ -15,7 +24,6 @@ global:
   staticPath: '/app/static/'
   # default pull policy for images
   imagePullPolicy: &imagePullPolicy "Always"
-
 
 # Set external access to the services
 ingress:
