@@ -37,7 +37,7 @@ spec:
       volumes:
         - name: backend-secrets
           secret:
-            secretName: backend-secrets
+            secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
             defaultMode: 0644
     {{- with .Values.backend.nodeSelector }}
       nodeSelector:
