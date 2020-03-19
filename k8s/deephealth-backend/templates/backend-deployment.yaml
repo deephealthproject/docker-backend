@@ -27,7 +27,7 @@ spec:
           args: ["wait-for-it.sh -h {{ .Release.Name }}-postgresql -p {{ .Values.postgresql.service.port }} && init.sh"]
           env:
             - name: DJANGO_ENV
-              value: "/app/.env/config"
+              value: "/app/config"
             - name: ADMIN_USER
               value: "{{ .Values.backend.admin.username }}"
             - name: ADMIN_PASSWORD
@@ -36,7 +36,8 @@ spec:
               value: "{{ .Values.backend.admin.email }}"
           volumeMounts:
             - name: backend-secrets
-              mountPath: "/app/.env"
+              mountPath: "/app/config"
+              subPath: config
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -45,10 +46,11 @@ spec:
           args: ["python manage.py runserver 0.0.0.0:{{ .Values.backend.service.containerPort }}"]
           env:
             - name: DJANGO_ENV
-              value: "/app/.env/config"
+              value: "/app/config"
           volumeMounts:
             - name: backend-secrets
-              mountPath: "/app/.env"
+              mountPath: "/app/config"
+              subPath: config
           ports:
             - name: backend-port
               containerPort: {{ .Values.backend.service.containerPort }}
