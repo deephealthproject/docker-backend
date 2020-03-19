@@ -43,7 +43,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/bash","-c"]
-          args: ["python manage.py runserver 0.0.0.0:{{ .Values.backend.service.containerPort }}"]
+          args: ["gunicorn --bind 0.0.0.0:{{ .Values.backend.service.containerPort }}{{ if .Values.global.debug }} --log-level debug{{ end }} -w {{ .Values.backend.workers }} backend.wsgi:application"]
           env:
             - name: DJANGO_ENV
               value: "/app/config"
