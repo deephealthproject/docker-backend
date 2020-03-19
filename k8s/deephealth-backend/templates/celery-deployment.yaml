@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.celery.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-celery
@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}-celery-worker
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.celery.image.repository }}:{{ .Values.celery.image.tag }}"
+          imagePullPolicy: {{ .Values.celery.image.pullPolicy }}
           command: ["/bin/sh","-c"]
           args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
           env:
