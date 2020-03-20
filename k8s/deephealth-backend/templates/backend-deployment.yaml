@@ -20,26 +20,12 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       initContainers:
-        - name: {{ .Chart.Name }}-init
-          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        - name: init
+          image: "kikkomep/k8s-wait-for:latest"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
-          command: ["/bin/sh","-c"]
-          args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-postgresql -p {{ .Values.postgresql.service.port }} && init.sh"]
-          env:
-            - name: DJANGO_ENV
-              value: "/app/config"
-            - name: ADMIN_USER
-              value: "{{ .Values.backend.admin.username }}"
-            - name: ADMIN_PASSWORD
-              value: "{{ .Values.backend.admin.password }}"
-            - name: ADMIN_EMAIL
-              value: "{{ .Values.backend.admin.email }}"
-          volumeMounts:
-            - name: backend-secrets
-              mountPath: "/app/config"
-              subPath: config
+          args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
       containers:
-        - name: {{ .Chart.Name }}
+        - name: gunicorn-backend
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           command: ["/bin/bash","-c"]

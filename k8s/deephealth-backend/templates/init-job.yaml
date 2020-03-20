@@ -1,0 +1,74 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "deephealth-backend.fullname" . }}-init
+  labels:
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-init
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-init
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+    labels:
+      app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-init
+      app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: wait-for-postgresql
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: 
+            - /bin/sh
+            - -c
+            - until PGPASSWORD={{ .Values.postgresql.postgresqlPassword }} psql -h "{{ include "deephealth-backend.fullname" . }}-postgresql" -U "{{ .Values.postgresql.postgresqlUsername }}" {{ .Values.postgresql.postgresqlDatabase }} -c '\q'; do 
+                >&2 echo "PostgreSQL is unavailable -- sleep 2 seconds and retry" ;
+                sleep 2 ;
+              done ;
+              echo "PostgreSQL ready"
+          volumeMounts:
+            - name: backend-secrets
+              mountPath: "/app/config"
+              subPath: config
+      containers:
+      - name: initializer
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        command: ["/bin/sh","-c"]
+        args: ["init.sh"]
+        env:
+          - name: DJANGO_ENV
+            value: "/app/config"
+          - name: ADMIN_USER
+            value: "{{ .Values.backend.admin.username }}"
+          - name: ADMIN_PASSWORD
+            value: "{{ .Values.backend.admin.password }}"
+          - name: ADMIN_EMAIL
+            value: "{{ .Values.backend.admin.email }}"
+        volumeMounts:
+          - name: backend-secrets
+            mountPath: "/app/config"
+            subPath: config
+      restartPolicy: Never
+      volumes:
+      - name: backend-secrets
+        secret:
+          secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+          defaultMode: 0644
+    {{- with .Values.backend.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.backend.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.backend.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+  backoffLimit: 4

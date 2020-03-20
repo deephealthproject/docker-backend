@@ -19,6 +19,11 @@ spec:
         app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-celery
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      initContainers:
+        - name: init
+          image: "kikkomep/k8s-wait-for:latest"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
       containers:
         - name: {{ .Chart.Name }}-celery-worker
           image: "{{ .Values.celery.image.repository }}:{{ .Values.celery.image.tag }}"
