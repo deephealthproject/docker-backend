@@ -102,6 +102,13 @@ nginx:
     port: 80
     #httpsPort: 443
 
+  # Comma separated list of allowed hosts
+  allowedHosts: ""
+
+  # Cross-Origin Resource Sharing (CORS) whitelist
+  corsOriginWhiteList: ""
+
+  # name of nginx-proxy configMap
   serverBlockConfigMap: proxy-config
 
   ingress:
@@ -137,6 +144,10 @@ nginx:
 celery:
 
   image: *backend_image
+
+  acceptContent: 'json' # list of comma separated values
+  resultBackend: 'db+sqlite:///results.sqlite'
+  taskSerializer: 'json'
   
   service:
     # type: ClusterIP
