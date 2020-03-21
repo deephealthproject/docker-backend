@@ -21,6 +21,7 @@ COPY src ${APP_PATH}
 COPY init.sh /usr/local/bin/
 COPY start.sh /usr/local/bin/
 COPY wait-for-it.sh /usr/local/bin/
+COPY wait-for-postgres.sh /usr/local/bin/
 
 # Set the current WorkDIR
 WORKDIR ${APP_PATH}
@@ -33,7 +34,10 @@ RUN \
     # set python3 as default Python interpreter
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 10\
     # set proper permissions for utility scripts
-    && chmod +x /usr/local/bin/init.sh /usr/local/bin/start.sh /usr/local/bin/wait-for-it.sh \
+    && chmod +x /usr/local/bin/init.sh \
+                /usr/local/bin/start.sh \
+                /usr/local/bin/wait-for-it.sh \
+                /usr/local/bin/wait-for-postgres.sh \
     # install app requirements
     && pip --no-cache-dir install -r requirements.txt \
     # create the user
