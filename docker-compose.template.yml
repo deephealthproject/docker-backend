@@ -26,6 +26,9 @@ services:
       ${BACKEND_VOLUME}
       - ./.config:/app/config
       - ./settings.conf:/app/settings.conf
+      - datasets:${DATASETS_DIR}
+      - training:${TRAINING_DIR}
+      - inference:${INFERENCE_DIR}
     depends_on:
       - broker
       - db
@@ -48,10 +51,12 @@ services:
       ${BACKEND_VOLUME}
       - ./.config:/app/config
       - ./settings.conf:/app/settings.conf
+      - datasets:${DATASETS_DIR}
+      - training:${TRAINING_DIR}
+      - inference:${INFERENCE_DIR}
     depends_on:
       - broker
       - db
-    
 
   db:
     image: bitnami/postgresql:latest
@@ -84,3 +89,6 @@ services:
 
 volumes:
   postgresql:
+  datasets:
+  inference:
+  training:
