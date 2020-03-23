@@ -10,20 +10,24 @@ djangoSecret: ""
 
 # Set data paths
 dataPaths:
-  datasets: 'data/datasets'
-  training: 'data/training'
-  inference: 'data/inference'
+  datasets: '/data/datasets'
+  training: '/data/training'
+  inference: '/data/inference'
 
 # global settings
 global:
   debug: &debug True
-  # persistence class
-  storageClass: default
   # static files settings
   staticUrl: '/static/'
   staticPath: '/app/static/'
   # default pull policy for images
   imagePullPolicy: &imagePullPolicy "Always"
+  # persistence class used by services
+  storageClass: &servicesStorageClass default
+  # persistence class with ReadWriteMany capability
+  datasetsStorageClass: *servicesStorageClass
+  trainingStorageClass: *servicesStorageClass
+  inferenceStorageClass: *servicesStorageClass
 
 # Set external access to the services
 ingress:

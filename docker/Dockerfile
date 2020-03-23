@@ -14,6 +14,14 @@ ENV BACKEND_PORT ${BACKEND_PORT}
 # Set the path where the app will be installed
 ENV APP_PATH "/app"
 
+# Set data paths
+ARG DATASETS_DIR="/data/datasets"
+ENV DATASETS_DIR=${DATASETS_DIR}
+ARG TRAINING_DIR="/data/training"
+ARG TRAINING_DIR=${TRAINING_DIR}
+ARG INFERENCE_DIR="/data/inference"
+ARG INFERENCE_DIR=${INFERENCE_DIR}
+
 # Copy source path
 COPY src ${APP_PATH}
 
@@ -43,7 +51,14 @@ RUN \
     # create the user
     && groupadd ${USERNAME} -g ${GID} || true \
     && useradd -m -u ${UID} -g ${GID} ${USERNAME} \
-    && chown -R ${USERNAME} ${APP_PATH}
+    && chown -R ${USERNAME} ${APP_PATH} \
+    && mkdir -p ${DATASETS_DIR} ${INFERENCE_DIR} ${TRAINING_DIR} \
+    && chown -R ${USERNAME} ${DATASETS_DIR} ${TRAINING_DIR} ${INFERENCE_DIR} 
+
+# Declare data volumes
+VOLUME ["${DATASETS_DIR}"]
+VOLUME ["${INFERENCE_DIR}"]
+VOLUME ["${TRAINING_DIR}"]
 
 # Set the default user
 USER ${USERNAME}
