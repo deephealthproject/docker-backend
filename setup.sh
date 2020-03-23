@@ -33,7 +33,7 @@ if [[ -n "${BACKEND_LOCAL_PATH:-}" ]]; then
 fi
 
 # clone sources
-if [[ ! -d "docker/src" ]] || [[ ! -L "docker/src" ]]; then
+if [[ ! -d "docker/src" ]] && [[ ! -L "docker/src" ]]; then
   if [[ -z "${BACKEND_LOCAL_PATH:-}" ]]; then
     #git clone --depth=1 https://github.com/deephealthproject/backend.git docker/src
     git clone --depth=1 git@github.com:deephealthproject/backend.git docker/src
@@ -43,7 +43,12 @@ if [[ ! -d "docker/src" ]] || [[ ! -L "docker/src" ]]; then
 fi
 
 # build images
-docker-compose build --build-arg DOCKER_LIBS_IMAGE="${DOCKER_LIBS_IMAGE:-}"
+docker-compose build \
+  --build-arg DOCKER_LIBS_IMAGE="${DOCKER_LIBS_IMAGE:-}" \
+  --build-arg DATASETS_DIR="${DATASETS_DIR:-}" \
+  --build-arg TRAINING_DIR="${TRAINING_DIR:-}" \
+  --build-arg INFERENCE_DIR="${INFERENCE_DIR:-}"
+
 
 # clean up source
 #rm -rf docker/src
