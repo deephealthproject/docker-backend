@@ -8,6 +8,8 @@ if [[ ! "${command}" =~ ^(backend|celery|bash)$ ]]; then
     exit 99
 fi
 
+wait-for-postgres.sh
+
 if [[ "${command}" == "backend" ]]; then
   python manage.py runserver "0.0.0.0:${BACKEND_PORT}"
 elif [[ "${command}" == "celery" ]]; then

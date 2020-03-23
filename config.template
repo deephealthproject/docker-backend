@@ -1,0 +1,33 @@
+# Allow DEBUG mode. Don't run with debug turned on in production!
+DEBUG=${DEBUG}
+
+# Set SECRET_KEY. Keep the secret key used in production secret!
+SECRET_KEY="${SECRET_KEY}"
+
+# Comma separated allowed hosts
+ALLOWED_HOSTS="${ALLOWED_HOSTS}"
+
+# Comma separated CORS domains
+CORS_ORIGIN_WHITELIST="${CORS_ORIGIN_WHITELIST}"
+
+# Database connection settings
+# DATABASE_URL="${DATABASE_URL}" # defined on docker-compose file
+# DATABASE_URL=psql://urser:un-githubbedpassword@127.0.0.1:8458/database # PostgreSQL DB
+
+# Relative path for static resources
+STATIC_URL="${STATIC_URL}"
+
+# Data directories
+TRAINING_DIR="${TRAINING_DIR}"
+INFERENCE_DIR="${INFERENCE_DIR}"
+DATASETS_DIR="${DATASETS_DIR}"
+
+# RabbitMQ Credentials
+# see https://hub.docker.com/_/rabbitmq
+# RABBITMQ_BROKER_URL='amqp://guest:guest@localhost'
+
+# Celery settings
+CELERY_ACCEPT_CONTENT="${CELERY_ACCEPT_CONTENT}" # list of comma separated values
+CELERY_RESULT_BACKEND="${CELERY_RESULT_BACKEND}"
+CELERY_TASK_SERIALIZER="${CELERY_TASK_SERIALIZER}"
+

@@ -1,8 +1,9 @@
 .idea
 .vscode
 .DS_Store
-.secrets.json
+.config
 venv
+values.yaml
 docker-compose.yml
 docker/src
 k8s/deephealth-backend/charts/
