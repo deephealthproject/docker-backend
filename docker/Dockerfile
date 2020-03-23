@@ -7,6 +7,10 @@ ARG UID=1000
 ARG GID=1000
 ARG USERNAME=backend
 
+# Set defaults
+ARG BACKEND_PORT=8000
+ENV BACKEND_PORT ${BACKEND_PORT} 
+
 # Set the path where the app will be installed
 ENV APP_PATH "/app"
 
@@ -23,8 +27,11 @@ WORKDIR ${APP_PATH}
 
 # Update env and system software
 RUN \
+    apt-get update -y -q \
+    && apt-get install -y --no-install-recommends libpq-dev \
+    && apt-get clean \
     # set python3 as default Python interpreter
-    update-alternatives --install /usr/bin/python python /usr/bin/python3 10\
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3 10\
     # set proper permissions for utility scripts
     && chmod +x /usr/local/bin/init.sh /usr/local/bin/start.sh /usr/local/bin/wait-for-it.sh \
     # install app requirements
@@ -36,3 +43,6 @@ RUN \
 
 # Set the default user
 USER ${USERNAME}
+
+# Default command
+CMD start.sh backend

@@ -5,3 +5,4 @@
 venv
 docker-compose.yml
 docker/src
+k8s/deephealth-backend/charts/

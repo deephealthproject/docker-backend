@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "deephealth-backend.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: init
+          image: "kikkomep/k8s-wait-for:latest"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
+      containers:
+        - name: gunicorn-backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: ["/bin/bash","-c"]
+          args: ["gunicorn --bind 0.0.0.0:{{ .Values.backend.service.containerPort }}{{ if .Values.global.debug }} --log-level debug{{ end }} -w {{ .Values.backend.workers }} backend.wsgi:application"]
+          env:
+            - name: DJANGO_ENV
+              value: "/app/config"
+          volumeMounts:
+            - name: backend-secrets
+              mountPath: "/app/config"
+              subPath: config
+          ports:
+            - name: backend-port
+              containerPort: {{ .Values.backend.service.containerPort }}
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+      volumes:
+        - name: backend-secrets
+          secret:
+            secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+            defaultMode: 0644
+    {{- with .Values.backend.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.backend.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.backend.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
