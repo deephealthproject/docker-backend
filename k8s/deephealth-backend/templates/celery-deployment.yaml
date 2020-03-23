@@ -37,6 +37,12 @@ spec:
             - name: backend-secrets
               mountPath: "/app/config"
               subPath: config
+            - name: datasets-volume
+              mountPath: {{ .Values.dataPaths.datasets }}
+            - name: training-volume
+              mountPath: {{ .Values.dataPaths.training }}
+            - name: inference-volume
+              mountPath: {{ .Values.dataPaths.inference }}
           ports:
             - name: celery-port
               containerPort: {{ .Values.celery.service.containerPort }}
@@ -56,6 +62,18 @@ spec:
           secret:
             secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
             defaultMode: 0644
+        - name: datasets-volume
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-datasets
+            readOnly: false
+        - name: training-volume
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-training
+            readOnly: false
+        - name: inference-volume
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-inference
+            readOnly: false
     {{- with .Values.celery.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
