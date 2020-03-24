@@ -69,3 +69,26 @@ Define mount paths for shared volumes variables in connection between some pods.
 - name: inference-volume
   mountPath: {{ .Values.dataPaths.inference }}
 {{- end -}}
+
+
+{{/*
+Define shared volumes in connection between some pods.
+*/}}
+{{- define "deephealth-backend.common-volumes" -}}
+- name: backend-secrets
+  secret:
+    secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+    defaultMode: 0644
+- name: datasets-volume
+  persistentVolumeClaim:
+    claimName: {{ include "deephealth-backend.fullname" . }}-datasets
+    readOnly: false
+- name: training-volume
+  persistentVolumeClaim:
+    claimName: {{ include "deephealth-backend.fullname" . }}-training
+    readOnly: false
+- name: inference-volume
+  persistentVolumeClaim:
+    claimName: {{ include "deephealth-backend.fullname" . }}-inference
+    readOnly: false
+{{- end -}}

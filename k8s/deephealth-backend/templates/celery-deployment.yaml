@@ -49,22 +49,7 @@ spec:
           resources:
             {{- toYaml .Values.celery.resources | nindent 12 }}
       volumes:
-        - name: backend-secrets
-          secret:
-            secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
-            defaultMode: 0644
-        - name: datasets-volume
-          persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-datasets
-            readOnly: false
-        - name: training-volume
-          persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-training
-            readOnly: false
-        - name: inference-volume
-          persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-inference
-            readOnly: false
+{{ include "deephealth-backend.common-volumes" . | indent 8 }}        
     {{- with .Values.celery.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
