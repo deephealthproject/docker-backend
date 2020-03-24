@@ -28,6 +28,10 @@ global:
   datasetsStorageClass: *servicesStorageClass
   trainingStorageClass: *servicesStorageClass
   inferenceStorageClass: *servicesStorageClass
+  # size of data volumes
+  datasetsStorageSize: 1Gi
+  trainingStorageSize: 1Gi
+  inferenceStorageSize: 1Gi
 
 # Set external access to the services
 ingress:
@@ -96,7 +100,7 @@ nginx:
   nameOverride: "deephealth-backend-nginx"
 
   image:
-    repository: dhealth/backend-proxy
+    # repository: 
     tag: latest
     pullPolicy: *imagePullPolicy
     debug: *debug
@@ -114,6 +118,12 @@ nginx:
 
   # name of nginx-proxy configMap
   serverBlockConfigMap: proxy-config
+
+  # serverDataVolume
+  staticFilesVolumeSize: 10Mi
+  staticFilesStorageClass: *servicesStorageClass
+  serverDataVolumeClaim: static-files
+  serverDataVolumePath: /app/static
 
   ingress:
     # enabled: false

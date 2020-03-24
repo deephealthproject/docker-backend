@@ -32,6 +32,14 @@ spec:
             - name: backend-secrets
               mountPath: "/app/.env"
               subPath: config
+            - name: nginx-static-files
+              mountPath: "/app/static"
+            - name: datasets-volume
+              mountPath: {{ .Values.dataPaths.datasets }}
+            - name: training-volume
+              mountPath: {{ .Values.dataPaths.training }}
+            - name: inference-volume
+              mountPath: {{ .Values.dataPaths.inference }}
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}
       volumes:
@@ -39,7 +47,23 @@ spec:
           secret:
             secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
             defaultMode: 0644
-    {{- with .Values.backend.nodeSelector }}
+        - name: nginx-static-files
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+            readOnly: false
+        - name: datasets-volume
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-datasets
+            readOnly: false
+        - name: training-volume
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-training
+            readOnly: false
+        - name: inference-volume
+          persistentVolumeClaim:
+            claimName: {{ include "deephealth-backend.fullname" . }}-inference
+            readOnly: false
+      {{- with .Values.backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
     {{- end }}
