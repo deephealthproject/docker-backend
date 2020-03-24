@@ -216,7 +216,7 @@ broker: &broker
   
   rabbitmq:
     username: user
-    password: password
+    # password: password
   
   service:
     port: 5672
@@ -251,7 +251,7 @@ postgresql:
   postgresqlDatabase: db
   # credentials
   postgresqlUsername: user
-  postgresqlPassword: password
+  # postgresqlPassword: password
 
   image:
     debug: *debug
