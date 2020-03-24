@@ -26,8 +26,7 @@ spec:
           imagePullPolicy: {{ .Values.console.image.pullPolicy }}
           command: ["sleep","infinity"]
           env:
-            - name: DJANGO_ENV
-              value: "/app/config"
+{{ include "deephealth-backend.common-env" . | indent 12 }}
           volumeMounts:
             - name: backend-secrets
               mountPath: "/app/.env"

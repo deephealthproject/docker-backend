@@ -31,8 +31,7 @@ spec:
           command: ["/bin/bash","-c"]
           args: ["gunicorn --bind 0.0.0.0:{{ .Values.backend.service.containerPort }}{{ if .Values.global.debug }} --log-level debug{{ end }} -w {{ .Values.backend.workers }} backend.wsgi:application"]
           env:
-            - name: DJANGO_ENV
-              value: "/app/config"
+{{ include "deephealth-backend.common-env" . | indent 12 }}
           volumeMounts:
             - name: backend-secrets
               mountPath: "/app/config"
