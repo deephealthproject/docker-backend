@@ -100,7 +100,7 @@ nginx:
   nameOverride: "deephealth-backend-nginx"
 
   image:
-    repository: dhealth/backend-proxy
+    # repository: 
     tag: latest
     pullPolicy: *imagePullPolicy
     debug: *debug
