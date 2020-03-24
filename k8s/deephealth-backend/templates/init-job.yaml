@@ -47,12 +47,7 @@ spec:
         command: ["/bin/sh","-c"]
         args: ["init.sh"]
         env:
-          - name: ADMIN_USER
-            value: "{{ .Values.backend.admin.username }}"
-          - name: ADMIN_PASSWORD
-            value: "{{ .Values.backend.admin.password }}"
-          - name: ADMIN_EMAIL
-            value: "{{ .Values.backend.admin.email }}"
+{{ include "deephealth-backend.adminCredentials" . | indent 10 }}
 {{ include "deephealth-backend.common-env" . | indent 10 }}
         volumeMounts:
           - name: backend-secrets
@@ -63,12 +58,7 @@ spec:
         imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
         command: ["python","manage.py","collectstatic","--noinput"]
         env:
-          - name: ADMIN_USER
-            value: "{{ .Values.backend.admin.username }}"
-          - name: ADMIN_PASSWORD
-            value: "{{ .Values.backend.admin.password }}"
-          - name: ADMIN_EMAIL
-            value: "{{ .Values.backend.admin.email }}"
+{{ include "deephealth-backend.adminCredentials" . | indent 10 }}
 {{ include "deephealth-backend.common-env" . | indent 10 }}
         volumeMounts:
           - name: backend-secrets

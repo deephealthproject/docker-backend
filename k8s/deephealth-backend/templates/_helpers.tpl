@@ -42,6 +42,30 @@ Return Django admin password
     {{- randAlphaNum 10 -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Define admin credentials via environment variables.
+*/}}
+{{- define "deephealth-backend.adminCredentials" -}}
+- name: ADMIN_USER
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+      key: adminUsername
+- name: ADMIN_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+      key: adminPassword
+{{- if .Values.backend.admin.email -}}
+- name: ADMIN_EMAIL
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+      key: adminEmail
+{{- end -}}
+{{- end -}}
+
 {{/*
 Define environment variables in connection between some pods.
 */}}
