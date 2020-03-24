@@ -33,15 +33,7 @@ spec:
           env:
 {{ include "deephealth-backend.common-env" . | indent 12 }}
           volumeMounts:
-            - name: backend-secrets
-              mountPath: "/app/config"
-              subPath: config
-            - name: datasets-volume
-              mountPath: {{ .Values.dataPaths.datasets }}
-            - name: training-volume
-              mountPath: {{ .Values.dataPaths.training }}
-            - name: inference-volume
-              mountPath: {{ .Values.dataPaths.inference }}
+{{ include "deephealth-backend.common-mount-paths" . | indent 12 }}
           ports:
             - name: backend-port
               containerPort: {{ .Values.backend.service.containerPort }}

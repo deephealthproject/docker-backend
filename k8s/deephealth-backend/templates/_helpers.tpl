@@ -53,3 +53,19 @@ Define environment variables in connection between some pods.
 - name: RABBITMQ_BROKER_URL
   value: amqp://{{ .Values.broker.rabbitmq.username }}:$(RABBITMQ_PASSWORD)@{{ include "deephealth-backend.fullname" . }}-rabbitmq:{{ .Values.broker.service.port }}
 {{- end -}}
+
+
+{{/*
+Define mount paths for shared volumes variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.common-mount-paths" -}}
+- name: backend-secrets
+  mountPath: "/app/config"
+  subPath: config
+- name: datasets-volume
+  mountPath: {{ .Values.dataPaths.datasets }}
+- name: training-volume
+  mountPath: {{ .Values.dataPaths.training }}
+- name: inference-volume
+  mountPath: {{ .Values.dataPaths.inference }}
+{{- end -}}
