@@ -25,11 +25,17 @@ spec:
           command: 
             - /bin/sh
             - -c
-            - until PGPASSWORD={{ .Values.postgresql.postgresqlPassword }} psql -h "{{ include "deephealth-backend.fullname" . }}-postgresql" -U "{{ .Values.postgresql.postgresqlUsername }}" {{ .Values.postgresql.postgresqlDatabase }} -c '\q'; do 
+            - until PGPASSWORD=${POSTGRES_PASSWORD} psql -h "{{ include "deephealth-backend.fullname" . }}-postgresql" -U "{{ .Values.postgresql.postgresqlUsername }}" {{ .Values.postgresql.postgresqlDatabase }} -c '\q'; do 
                 >&2 echo "PostgreSQL is unavailable -- sleep 2 seconds and retry" ;
                 sleep 2 ;
               done ;
               echo "PostgreSQL ready"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "deephealth-backend.fullname" . }}-postgresql
+                  key: postgresql-password
           volumeMounts:
             - name: backend-secrets
               mountPath: "/app/config"
@@ -41,14 +47,8 @@ spec:
         command: ["/bin/sh","-c"]
         args: ["init.sh"]
         env:
-          - name: DJANGO_ENV
-            value: "/app/config"
-          - name: ADMIN_USER
-            value: "{{ .Values.backend.admin.username }}"
-          - name: ADMIN_PASSWORD
-            value: "{{ .Values.backend.admin.password }}"
-          - name: ADMIN_EMAIL
-            value: "{{ .Values.backend.admin.email }}"
+{{ include "deephealth-backend.adminCredentials" . | indent 10 }}
+{{ include "deephealth-backend.common-env" . | indent 10 }}
         volumeMounts:
           - name: backend-secrets
             mountPath: "/app/config"
@@ -58,14 +58,8 @@ spec:
         imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
         command: ["python","manage.py","collectstatic","--noinput"]
         env:
-          - name: DJANGO_ENV
-            value: "/app/config"
-          - name: ADMIN_USER
-            value: "{{ .Values.backend.admin.username }}"
-          - name: ADMIN_PASSWORD
-            value: "{{ .Values.backend.admin.password }}"
-          - name: ADMIN_EMAIL
-            value: "{{ .Values.backend.admin.email }}"
+{{ include "deephealth-backend.adminCredentials" . | indent 10 }}
+{{ include "deephealth-backend.common-env" . | indent 10 }}
         volumeMounts:
           - name: backend-secrets
             mountPath: "/app/config"

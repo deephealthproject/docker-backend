@@ -31,18 +31,9 @@ spec:
           command: ["/bin/sh","-c"]
           args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
           env:
-            - name: DJANGO_ENV
-              value: "/app/config"
+{{ include "deephealth-backend.common-env" . | indent 12 }}
           volumeMounts:
-            - name: backend-secrets
-              mountPath: "/app/config"
-              subPath: config
-            - name: datasets-volume
-              mountPath: {{ .Values.dataPaths.datasets }}
-            - name: training-volume
-              mountPath: {{ .Values.dataPaths.training }}
-            - name: inference-volume
-              mountPath: {{ .Values.dataPaths.inference }}
+{{ include "deephealth-backend.common-mount-paths" . | indent 12 }}
           ports:
             - name: celery-port
               containerPort: {{ .Values.celery.service.containerPort }}
@@ -58,22 +49,7 @@ spec:
           resources:
             {{- toYaml .Values.celery.resources | nindent 12 }}
       volumes:
-        - name: backend-secrets
-          secret:
-            secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
-            defaultMode: 0644
-        - name: datasets-volume
-          persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-datasets
-            readOnly: false
-        - name: training-volume
-          persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-training
-            readOnly: false
-        - name: inference-volume
-          persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-inference
-            readOnly: false
+{{ include "deephealth-backend.common-volumes" . | indent 8 }}        
     {{- with .Values.celery.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
