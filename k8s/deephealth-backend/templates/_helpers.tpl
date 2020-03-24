@@ -33,6 +33,16 @@ Create chart name and version as used by the chart label.
 
 
 {{/*
+Return Django admin password
+*/}}
+{{- define "deephealth-backend.admin.password" -}}
+{{- if .Values.backend.admin.password -}}
+    {{- .Values.backend.admin.password -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
+{{- end -}}
+{{/*
 Define environment variables in connection between some pods.
 */}}
 {{- define "deephealth-backend.common-env" -}}
