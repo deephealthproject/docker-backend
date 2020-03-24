@@ -35,7 +35,7 @@ spec:
               mountPath: "/app/config"
               subPath: config
       containers:
-      - name: initializer
+      - name: django-init
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
         imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
         command: ["/bin/sh","-c"]
@@ -53,12 +53,35 @@ spec:
           - name: backend-secrets
             mountPath: "/app/config"
             subPath: config
+      - name: django-static
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        command: ["python","manage.py","collectstatic","--noinput"]
+        env:
+          - name: DJANGO_ENV
+            value: "/app/config"
+          - name: ADMIN_USER
+            value: "{{ .Values.backend.admin.username }}"
+          - name: ADMIN_PASSWORD
+            value: "{{ .Values.backend.admin.password }}"
+          - name: ADMIN_EMAIL
+            value: "{{ .Values.backend.admin.email }}"
+        volumeMounts:
+          - name: backend-secrets
+            mountPath: "/app/config"
+            subPath: config
+          - name: nginx-static-files
+            mountPath: "/app/static"
       restartPolicy: Never
       volumes:
       - name: backend-secrets
         secret:
           secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
           defaultMode: 0644
+      - name: nginx-static-files
+        persistentVolumeClaim:
+          claimName: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+          readOnly: false
     {{- with .Values.backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
