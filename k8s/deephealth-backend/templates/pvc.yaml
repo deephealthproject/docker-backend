@@ -12,7 +12,7 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: 1Gi
+        storage: {{ .Values.global.datasetsStorageSize }}
     storageClassName: {{ .Values.global.datasetsStorageClass }}
 
 ---
@@ -31,7 +31,7 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: 1Gi
+        storage: {{ .Values.global.trainingStorageSize }}
     storageClassName: {{ .Values.global.trainingStorageClass }}
 
 ---
@@ -50,7 +50,7 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: 1Gi
+        storage: {{ .Values.global.inferenceStorageSize }}
     storageClassName: {{ .Values.global.inferenceStorageClass }}
 
 ---

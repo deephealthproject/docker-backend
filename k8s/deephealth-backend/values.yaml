@@ -28,6 +28,10 @@ global:
   datasetsStorageClass: *servicesStorageClass
   trainingStorageClass: *servicesStorageClass
   inferenceStorageClass: *servicesStorageClass
+  # size of data volumes
+  datasetsStorageSize: 1Gi
+  trainingStorageSize: 1Gi
+  inferenceStorageSize: 1Gi
 
 # Set external access to the services
 ingress:
