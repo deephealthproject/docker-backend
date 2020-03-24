@@ -52,3 +52,22 @@ spec:
       requests:
         storage: 1Gi
     storageClassName: {{ .Values.global.inferenceStorageClass }}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+  labels:
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-{{ .Values.nginx.serverDataVolumeClaim }}
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: {{ .Values.nginx.staticFilesVolumeSize }}
+    storageClassName: {{ .Values.nginx.staticFilesStorageClass }}

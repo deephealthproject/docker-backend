@@ -115,6 +115,12 @@ nginx:
   # name of nginx-proxy configMap
   serverBlockConfigMap: proxy-config
 
+  # serverDataVolume
+  staticFilesVolumeSize: 10Mi
+  staticFilesStorageClass: *servicesStorageClass
+  serverDataVolumeClaim: static-files
+  serverDataVolumePath: /app/static
+
   ingress:
     # enabled: false
     # hostname: nginx.backend.172.30.10.101.nip.io
