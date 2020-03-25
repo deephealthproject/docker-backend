@@ -50,18 +50,18 @@ Define admin credentials via environment variables.
 - name: ADMIN_USER
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+      name: {{ include "deephealth-backend.fullname" . }}-secrets
       key: adminUsername
 - name: ADMIN_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+      name: {{ include "deephealth-backend.fullname" . }}-secrets
       key: adminPassword
 {{- if .Values.backend.admin.email -}}
 - name: ADMIN_EMAIL
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+      name: {{ include "deephealth-backend.fullname" . }}-secrets
       key: adminEmail
 {{- end -}}
 {{- end -}}
@@ -111,7 +111,7 @@ Define shared volumes in connection between some pods.
 {{- define "deephealth-backend.common-volumes" -}}
 - name: backend-secrets
   secret:
-    secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+    secretName: {{ include "deephealth-backend.fullname" . }}-secrets
     defaultMode: 0644
 - name: datasets-volume
   persistentVolumeClaim:

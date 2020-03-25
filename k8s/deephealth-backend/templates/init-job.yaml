@@ -70,7 +70,7 @@ spec:
       volumes:
       - name: backend-secrets
         secret:
-          secretName: {{ include "deephealth-backend.fullname" . }}-backend-secrets
+          secretName: {{ include "deephealth-backend.fullname" . }}-secrets
           defaultMode: 0644
       - name: nginx-static-files
         persistentVolumeClaim:
