@@ -23,19 +23,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-proxy
+  name: {{ include "deephealth-backend.fullname" . }}-endpoint
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-endpoint
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  type: {{ .Values.serviceType }}
+  type: {{ .Values.endpoint.service.type }}
   ports:
     - port: 80
       targetPort: 8000
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-nginx
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-endpoint
     app.kubernetes.io/instance: {{ .Release.Name }}

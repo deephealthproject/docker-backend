@@ -34,7 +34,9 @@ global:
   inferenceStorageSize: 1Gi
 
 # ServiceType of the Back-end EndPoint
-serviceType: NodePort
+endpoint:
+  service:
+    type: NodePort
 
 # Set external access to the services
 ingress:
