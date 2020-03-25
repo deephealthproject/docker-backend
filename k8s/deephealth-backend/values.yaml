@@ -33,6 +33,9 @@ global:
   trainingStorageSize: 1Gi
   inferenceStorageSize: 1Gi
 
+# ServiceType of the Back-end EndPoint
+serviceType: NodePort
+
 # Set external access to the services
 ingress:
   enabled: true

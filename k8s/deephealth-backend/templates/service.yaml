@@ -30,7 +30,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  type: {{ .Values.backend.service.type }}
+  type: {{ .Values.serviceType }}
   ports:
     - port: 80
       targetPort: 8000
