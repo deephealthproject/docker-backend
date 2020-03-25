@@ -59,6 +59,13 @@ backend:
     # password: admin
     # email: admin@domain.it
 
+  # Comma separated list of allowed hosts
+  allowedHosts: "*"
+
+  # Cross-Origin Resource Sharing (CORS) whitelist
+  corsOriginWhiteList: ""
+
+  # number of replicas
   replicaCount: 1
   
   # number of Gunicorn workers
@@ -112,12 +119,6 @@ nginx:
     type: ClusterIP
     port: 80
     #httpsPort: 443
-
-  # Comma separated list of allowed hosts
-  allowedHosts: ""
-
-  # Cross-Origin Resource Sharing (CORS) whitelist
-  corsOriginWhiteList: ""
 
   # name of nginx-proxy configMap
   serverBlockConfigMap: proxy-config
