@@ -75,7 +75,7 @@ backend:
 
   image: &backend_image
     repository: dhealth/backend
-    tag: latest
+    tag: 0.1
     pullPolicy: *imagePullPolicy
 
   service:
@@ -113,7 +113,7 @@ nginx:
 
   image:
     # repository: 
-    tag: latest
+    # tag: latest
     pullPolicy: *imagePullPolicy
     debug: *debug
   

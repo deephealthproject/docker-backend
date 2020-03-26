@@ -66,8 +66,8 @@ backend:
   replicaCount: 1
 
   image: &backend_image
-    repository: kikkomep/dhb
-    tag: latest
+    # repository: dhealth/backend
+    tag: 0.1
     pullPolicy: Always
 
   # service:
