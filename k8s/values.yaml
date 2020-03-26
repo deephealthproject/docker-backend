@@ -112,8 +112,6 @@ nginx:
   nameOverride: "deephealth-backend-nginx"
 
   image:
-    #repository: kikkomep/dhb
-    #tag: nginx
     pullPolicy: Always
     debug: *debug
   
@@ -283,7 +281,7 @@ postgresql:
 console:
   enabled: *debug
   image:
-    repository: kikkomep/net-tools
+    repository: busybox
     tag: latest
     pullPolicy: Always
     debug: *debug
