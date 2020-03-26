@@ -21,7 +21,7 @@ spec:
     spec:
       initContainers:
         - name: init
-          image: "kikkomep/k8s-wait-for:latest"
+          image: "crs4/k8s-wait-for:latest"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
       containers:
