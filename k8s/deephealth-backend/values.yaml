@@ -46,7 +46,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: backend.127.0.0.1.nip.io
-      serviceName: deephealth-backend-proxy # service name without Release.Name prefix
+      serviceName: deephealth-backend-endpoint # service name without Release.Name prefix
       servicePort: 80
 
   tls: []
@@ -109,7 +109,7 @@ backend:
 
 # nginx settings
 nginx:
-  nameOverride: "deephealth-backend-nginx"
+  nameOverride: "nginx"
 
   image:
     # repository: 
@@ -214,7 +214,7 @@ celery:
 # RabbitMQ settings. You can find all the available settings 
 # at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
 broker: &broker
-  nameOverride: "deephealth-backend-rabbitmq"
+  nameOverride: "rabbitmq"
 
   image:
     debug: *debug
@@ -252,7 +252,7 @@ rabbitmq: *broker
 # PostgreSQL settings.
 # You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
-  nameOverride: "deephealth-backend-postgresql"
+  nameOverride: "postgresql"
   # DB
   postgresqlDatabase: db
   # credentials

@@ -2,9 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-nameOverride: ""
-fullnameOverride: ""
-
 # Set Django secret
 djangoSecret: "<DJANGO SECRET>" # generate your own Django secret
 
@@ -48,7 +45,7 @@ global:
 #     # kubernetes.io/tls-acme: "true"
 #   hosts:
 #     - host: backend.172.30.10.101.nip.io
-#       serviceName: deephealth-backend-proxy # service name without ReleasePrefix
+#       serviceName: deephealth-backend-endpoint # service name without ReleasePrefix
 #       servicePort: 80
 
 #   tls: []
@@ -109,7 +106,7 @@ backend:
 
 # nginx settings
 nginx:
-  nameOverride: "deephealth-backend-nginx"
+  nameOverride: "nginx"
 
   image:
     pullPolicy: Always
@@ -208,7 +205,7 @@ celery:
 # RabbitMQ settings. You can find all the available settings 
 # at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
 broker: &broker
-  nameOverride: "deephealth-backend-rabbitmq"
+  nameOverride: "rabbitmq"
 
   image:
     debug: *debug
@@ -245,7 +242,7 @@ rabbitmq: *broker
 # PostgreSQL settings.
 # You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
-  nameOverride: "deephealth-backend-postgresql"
+  nameOverride: "postgresql"
   # DB
   postgresqlDatabase: db
   # credentials
