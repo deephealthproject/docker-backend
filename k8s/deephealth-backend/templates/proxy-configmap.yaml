@@ -14,7 +14,7 @@ data:
     upstream backend_app {
       # fail_timeout=0 means we always retry an upstream even if it failed
       # to return a good HTTP response
-      server {{ include "deephealth-backend.fullname" . }}:{{ .Values.backend.service.port }} fail_timeout=0;
+      server {{ include "deephealth-backend.fullname" . }}-backend:{{ .Values.backend.service.port }} fail_timeout=0;
     }
 
     server {

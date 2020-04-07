@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}
+  name: {{ include "deephealth-backend.fullname" . }}-backend
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-backend
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -15,7 +15,7 @@ spec:
       protocol: TCP
       name: backend-port
   selector:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-backend
     app.kubernetes.io/instance: {{ .Release.Name }}
 
 ---
