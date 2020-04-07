@@ -3,17 +3,20 @@
 
 # docker-backend
 
-Docker resources for the DeepHealth Back-end (see [https://github.com/deephealthproject/backend]()).
+Containerization of the DeepHealth back end (see [https://github.com/deephealthproject/backend]()).
 
-#### Requirements
-
-*  **Docker** (>= 19.03.5)
-*  **Kubernetes** (>=1.17)
-*  Kubernetes volume provisioner with support for `ReadWriteMany` *access mode* (e.g., **Ceph**, **NFS**, etc.)
-*  **Helm 2**
+Keep on reading to see how to [deploy on Kubernetes](#deploy-on-kubernetes) or
+how to run it or develop [using docker-compose](#develop-with-dockerCompose).
 
 
 ## Deploy on Kubernetes
+
+### Requirements
+
+*  Kubernetes volume provisioner with support for `ReadWriteMany` *access mode* (e.g., **Ceph**, **NFS**, etc.)
+*  **Helm 2**
+
+### Installation
 
 Clone the [`docker-backend`](https://github.com/deephealthproject/docker-backend) repository:
 
@@ -24,6 +27,9 @@ git clone git@github.com:deephealthproject/docker-backend.git
 Collect `helm` dependencies by typing:
 
 ```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add crs4 https://crs4.github.io/helm-charts/
+helm repo add deephealth https://deephealthproject.github.io/helm-charts/
 helm dependency build k8s/deephealth-backend
 ```
 
@@ -81,12 +87,29 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-      # Replace host with your 
+      # Replace host with your
       # ingress controller hostname or IP
     - host: backend.172.30.20.10.nip.io
 ```
 
+### Helm chart parameters
 
+|           Parameter               |                    Description                   |              Default        |
+|-----------------------------------|--------------------------------------------------|-----------------------------|
+| `storageClass`                    | Storage class used by services                   |  `nil`                      |
+| `datasetsStorageClass`            | Storage class used for datasets                  |  `*storageClass`            |
+| `trainingStorageClass`            | Storage class used for training datasets         |  `*datasetsStorageClass`    |
+| `inferenceStorageClass`           | Storage class used for inference datasets        |  `*datasetsStorageClass`    |
+| `datasetsStorageSize`             | Size requested for dataset PVC                   | |
+| `trainingStorageSize`             | Size requested for training dataset PVC          | |
+| `inferenceStorageSize`            | Size requested for inference dataset PVC         | |
+| `ingress.enabled`                 | | |
+| `djangoSecret`                    | | |
+| `dataPaths.datasets`              | | `/data/datasets` |
+| `dataPaths.training`              | | `/data/training` |
+| `dataPaths.inference`             | | `/data/inference` |
+
+TODO:  complete table
 
 ## Develop with Docker(Compose)
 
