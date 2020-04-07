@@ -118,7 +118,7 @@ nginx:
   #   #httpsPort: 443
 
   #serverBlockConfigMap: proxy-config
-  staticFilesStorageClass: csi-cephfs
+  staticFilesStorageClass: *servicesStorageClass
   #serverDataVolumeClaim: {{ include "deephealth-backend.fullname" . }}-static-files
   serverDataVolumePath: /app/static
 
