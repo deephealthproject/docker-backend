@@ -75,6 +75,10 @@ helm install --name deephealth-backend crs4/deephealth-backend -f values.yaml
 
 Take a look at the deployment notes to know how to access services  (`helm status deephealth-backend`).
 
+parameters
+
+[parameters](#helm-chart-parameters)
+
 
 #### Access via Ingress
 
@@ -92,24 +96,57 @@ ingress:
     - host: backend.172.30.20.10.nip.io
 ```
 
-### Helm chart parameters
+#### Parameters
 
-|           Parameter               |                    Description                   |              Default        |
-|-----------------------------------|--------------------------------------------------|-----------------------------|
-| `storageClass`                    | Storage class used by services                   |  `nil`                      |
-| `datasetsStorageClass`            | Storage class used for datasets                  |  `*storageClass`            |
-| `trainingStorageClass`            | Storage class used for training datasets         |  `*datasetsStorageClass`    |
-| `inferenceStorageClass`           | Storage class used for inference datasets        |  `*datasetsStorageClass`    |
-| `datasetsStorageSize`             | Size requested for dataset PVC                   | |
-| `trainingStorageSize`             | Size requested for training dataset PVC          | |
-| `inferenceStorageSize`            | Size requested for inference dataset PVC         | |
-| `ingress.enabled`                 | | |
-| `djangoSecret`                    | | |
-| `dataPaths.datasets`              | | `/data/datasets` |
-| `dataPaths.training`              | | `/data/training` |
-| `dataPaths.inference`             | | `/data/inference` |
+The following tables lists the main configurable parameters of the `deephealth-backend` chart and their default values. 
 
-TODO:  complete table
+|           Parameter                           |                    Description                                                                |            Default                     |
+|-----------------------------------------------|-----------------------------------------------------------------------------------------------|----------------------------------------|
+| `global.debug`                                | Enable/disable debug mode                                                                     |  `False`                               |
+| `global.storageClass`                         | Global storage class for dynamic provisioning                                                 |  `nil`                                 |
+| `global.imagePullPolicy`                      | Global image pull policy                                                                      |  `Always`                              |
+| `persistence.datasets.storageClass`           | Storage class used for datasets (requires support for `ReadWriteMany` access mode)            |  `*globalStorageClass`                 |
+| `persistence.datasets.path`                   | Path to mount the datasets volume at                                                          |  `/data/datasets`                      |
+| `persistence.datasets.size`                   | Size of the datasets volume                                                                   |  `1Gi`                                 |
+| `persistence.training.storageClass`           | Storage class used for training data (requires support for `ReadWriteMany` access mode)       |  `*globalStorageClass`                 |
+| `persistence.training.path`                   | Path to mount the training data volume at                                                     |  `/data/training`                      |
+| `persistence.training.size`                   | Size of the training data volume                                                              |  `1Gi`                                 |
+| `persistence.inference.storageClass`          | Storage class used for inference data (requires support for `ReadWriteMany` access mode)      |  `*globalStorageClass`                 |
+| `persistence.inference.path`                  | Path to mount the inference data volume at                                                    |  `/data/datasets`                      |
+| `persistence.inference.size`                  | Size of the inference data volume                                                             |  `1Gi`                                 |
+| `endpoint.service.type`                       | Kubernetes service type of the API Endpoint                                                   |  `NodePort`                            |
+| `ingress.enabled`                             | Enable the ingress for the API Endpoint service                                               |  `false`                               |
+| `ingress.annations`                           | Annotations for the ingress realted with the API Endpoint service                             |  `kubernetes.io/ingress.class: nginx`  |
+| `ingress.hosts`                               | Hosts paths for the ingress realted with the API Endpoint service (see example)               |  `nil`                                 |
+| `backend.image.repository`                    | Back-end App Docker Image                                                                     |  `dhealth/backend`                     |
+| `backend.image.tag`                           | Back-end App Docker Image Tag                                                                 |  `0.1`                                 |
+| `backend.admin.username`                      | Username of the administrator of the backend app                                              |  `admin`                               |
+| `backend.admin.password`                      | Password of the administrator of the backend app (autogenerated if not defined)               |  `nil`                                 |
+| `backend.admin.email`                         | Email of the administrator of the backend app                                                 |  `nil`                                 |
+| `backend.replicaCount`                        | Number of replicase of the the backend (Gunicorn) server replicas                             |  `1`                                   |
+| `backend.workers`                             | Number of workers of every backend (Gunicorn) server replica                                  |  `3`                                   |
+| `backend.allowedHosts`                        | List of `ALLOWED_HOSTS` for the backend Django app                                            |  `*`                                   |
+| `backend.corsOriginWhiteList`                 | `CORS_ORIGIN_WHITE_LIST` for the backend Django app                                           |  `nil`                                 |
+| `backend.resources`                           | CPU/Memory resource requests/limits of the backend server replica                             |  `nil`                                 |
+| `backend.nodeSelector`                        | Node labels for pod assignment of the backend server replicas                                 |  `nil`                                 |
+| `backend.tolerations`                         | Tollerations labels for pod assignment of the backend server repliacas                        |  `nil`                                 |
+| `backend.affinity`                            | Affinity labels for pod assignment of the backend server replicas                             |  `nil`                                 |
+| `celery.acceptContent`                        | A list of comma-separated content-types to allow on Celery workers                            |  `json`                                |
+| `celery.taskSerializer`                       | A list of comma-separated serializers to allow on Celery workers                              |  `json`                                |
+| `celery.resources`                            | CPU/Memory resource requests/limits of the celery worker replica                              |  `nil`                                 |
+| `celery.nodeSelector`                         | Node labels for pod assignment of the celery worker replicas                                  |  `nil`                                 |
+| `celery.tolerations`                          | Tollerations labels for pod assignment of the celery worker repliacas                         |  `nil`                                 |
+| `celery.affinity`                             | Affinity labels for pod assignment of the celery worker replicas                              |  `nil`                                 |
+
+Below you can find the link to the available parameters for the remaining deployment components:
+
+* `nginx`: [https://github.com/bitnami/charts/blob/master/bitnami/nginx/README.md]()
+* `broker`: [https://github.com/bitnami/charts/blob/master/bitnami/rabbitmq/README.md]()
+* `postgresql`: [https://github.com/bitnami/charts/blob/master/bitnami/postgresql/README.md]()
+
+
+
+
 
 ## Develop with Docker(Compose)
 
