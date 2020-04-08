@@ -28,8 +28,8 @@ data:
       keepalive_timeout 60;
 
       # set localtion for static files
-      location {{ .Values.global.staticUrl }} {
-        alias {{ .Values.global.staticPath }};
+      location {{ include "deephealth-backend.static_files.url" . }} {
+        alias {{ include "deephealth-backend.static_files.path" . }};
       }
 
       # set proxy location

@@ -39,6 +39,21 @@ Return Django admin password
 {{- end -}}
 
 {{/*
+Return Django static_files url
+*/}}
+{{- define "deephealth-backend.static_files.url" -}}
+/static/
+{{- end -}}
+
+{{/*
+Return Django static_files path
+*/}}
+{{- define "deephealth-backend.static_files.path" -}}
+{{- $url := .Values.nginx.serverDataVolumePath | trimSuffix "/" -}}
+{{- printf "%s/" $url -}}
+{{- end -}}
+
+{{/*
 Define admin credentials via environment variables.
 */}}
 {{- define "deephealth-backend.adminCredentials" -}}

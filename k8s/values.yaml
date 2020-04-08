@@ -14,9 +14,6 @@ dataPaths:
 # global settings
 global:
   debug: &debug True
-  # static files settings
-  staticUrl: '/static/'
-  staticPath: '/app/static/'
   # default pull policy for images
   imagePullPolicy: &imagePullPolicy "Always"
   # persistence class
