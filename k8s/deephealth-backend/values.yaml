@@ -163,7 +163,6 @@ nginx:
 celery:
 
   acceptContent: 'json' # list of comma separated values
-  resultBackend: 'db+sqlite:///results.sqlite'
   taskSerializer: 'json'
   
   service:
