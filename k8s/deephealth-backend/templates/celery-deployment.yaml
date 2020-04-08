@@ -26,8 +26,8 @@ spec:
           args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
       containers:
         - name: {{ .Chart.Name }}-celery-worker
-          image: "{{ .Values.celery.image.repository }}:{{ .Values.celery.image.tag }}"
-          imagePullPolicy: {{ .Values.celery.image.pullPolicy }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           command: ["/bin/sh","-c"]
           args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
           env:

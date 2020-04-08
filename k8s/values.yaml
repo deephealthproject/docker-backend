@@ -154,8 +154,6 @@ nginx:
 # Celery settings
 celery:
 
-  image: *backend_image
-
   acceptContent: 'json' # list of comma separated values
   resultBackend: 'db+sqlite:///results.sqlite'
   taskSerializer: 'json'
