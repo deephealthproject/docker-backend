@@ -51,7 +51,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: backend.127.0.0.1.nip.io
-      serviceName: deephealth-backend-endpoint # service name without Release.Name prefix
+      serviceName: endpoint # service name without Release.Name prefix
       servicePort: 80
 
   tls: []

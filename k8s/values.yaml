@@ -49,7 +49,7 @@ persistence:
 #     # kubernetes.io/tls-acme: "true"
 #   hosts:
 #     - host: backend.172.30.10.101.nip.io
-#       serviceName: deephealth-backend-endpoint # service name without ReleasePrefix
+#       serviceName: endpoint # service name without ReleasePrefix
 #       servicePort: 80
 
 #   tls: []
