@@ -12,8 +12,8 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.global.datasetsStorageSize }}
-    storageClassName: {{ .Values.global.datasetsStorageClass }}
+        storage: {{ .Values.persistence.datasets.size }}
+    storageClassName: {{ .Values.persistence.datasets.storageClass }}
 
 ---
 
@@ -31,8 +31,8 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.global.trainingStorageSize }}
-    storageClassName: {{ .Values.global.trainingStorageClass }}
+        storage: {{ .Values.persistence.training.size }}
+    storageClassName: {{ .Values.persistence.training.storageClass }}
 
 ---
 
@@ -50,8 +50,8 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.global.inferenceStorageSize }}
-    storageClassName: {{ .Values.global.inferenceStorageClass }}
+        storage: {{ .Values.persistence.inference.size }}
+    storageClassName: {{ .Values.persistence.inference.storageClass }}
 
 ---
 
@@ -69,5 +69,5 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.nginx.staticFilesVolumeSize }}
-    storageClassName: {{ .Values.nginx.staticFilesStorageClass }}
+        storage: {{ .Values.persistence.staticFiles.size }}
+    storageClassName: {{ .Values.persistence.staticFiles.storageClass }}

@@ -5,27 +5,34 @@
 # Set Django secret
 djangoSecret: "<DJANGO SECRET>" # generate your own Django secret
 
-# Set data paths
-dataPaths:
-  datasets: '/data/datasets'
-  training: '/data/training'
-  inference: '/data/inference'
 
 # global settings
 global:
   debug: &debug True
   # default pull policy for images
   imagePullPolicy: &imagePullPolicy "Always"
-  # persistence class
-  storageClass: default
-  # persistence class with ReadWriteMany capability
-  datasetsStorageClass: csi-cephfs
-  trainingStorageClass: csi-cephfs
-  inferenceStorageClass: csi-cephfs
-  # size of data volumes
-  datasetsStorageSize: 500Mi
-  trainingStorageSize: 500Mi
-  inferenceStorageSize: 500Mi
+  # persistence class used by services
+  storageClass: &globalStorageClass ""
+
+# Persistence settings
+# Notice that all the storage classes below
+# need to support the 'ReadWriteMany' access mode
+persistence:
+  datasets:
+    storageClass: *globalStorageClass
+    path: '/data/datasets'
+    size: 1Gi
+  training:
+    storageClass: *globalStorageClass
+    path: '/data/training'
+    size: 1Gi
+  inference:
+    storageClass: *globalStorageClass
+    path: '/data/inference'
+    size: 1Gi
+  staticFiles:
+    storageClass: *globalStorageClass
+    size: 10Mi
 
 
 # ServiceType of the Back-end EndPoint
@@ -115,9 +122,9 @@ nginx:
   #   #httpsPort: 443
 
   #serverBlockConfigMap: proxy-config
-  staticFilesStorageClass: *servicesStorageClass
-  #serverDataVolumeClaim: {{ include "deephealth-backend.fullname" . }}-static-files
-  serverDataVolumePath: /app/static
+  # serverDataVolumeClaim: static-files
+  # serverDataVolumePath: /app/static
+  
 
   ingress:
     # enabled: false
