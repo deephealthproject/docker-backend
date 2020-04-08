@@ -5,8 +5,9 @@
 
 Containerization of the DeepHealth back end (see [https://github.com/deephealthproject/backend]()).
 
-Keep on reading to see how to [deploy on Kubernetes](#deploy-on-kubernetes) or
-how to run it or develop [using docker-compose](#develop-with-dockerCompose).
+Keep on reading to see how to [deploy on Kubernetes](#deploy-on-kubernetes) or how to run it or develop [using docker-compose](#develop-with-dockerCompose).
+
+
 
 
 ## Deploy on Kubernetes
@@ -16,15 +17,42 @@ how to run it or develop [using docker-compose](#develop-with-dockerCompose).
 *  Kubernetes volume provisioner with support for `ReadWriteMany` *access mode* (e.g., **Ceph**, **NFS**, etc.)
 *  **Helm 2**
 
+
+
 ### Installation
 
-Clone the [`docker-backend`](https://github.com/deephealthproject/docker-backend) repository:
+1. Add the `helm-charts` repository:
+
+```bash
+helm add repo dhealth https://deephealthproject.github.io/helm-charts/
+```
+
+2. Download the `values.yaml` template:
+
+```bash
+curl https://raw.githubusercontent.com/deephealthproject/docker-backend/develop/k8s/deephealth-backend/values.yaml -o values.yaml
+```
+
+3. Edit the `values.yaml` to configure your deployment ([here](#helm-chart-parameters) the available parameters) 
+4. To install the chart with the release name `deephealth-backend` :
+
+```bash
+helm install --name deephealth-backend dhealth/deephealth-backend -f values.yaml
+```
+
+Take a look at the deployment notes to know how to access services  (`helm status deephealth-backend`).
+
+
+
+#### Installation from sources
+
+1. Clone the [`docker-backend`](https://github.com/deephealthproject/docker-backend) repository:
 
 ```
 git clone git@github.com:deephealthproject/docker-backend.git
 ```
 
-Collect `helm` dependencies by typing:
+2. Collect `helm` dependencies by typing:
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -33,54 +61,19 @@ helm repo add deephealth https://deephealthproject.github.io/helm-charts/
 helm dependency build k8s/deephealth-backend
 ```
 
-<!--
-Add the `helm-charts` repository:
+3. Edit the ´k8s/values.yaml´ template to configure your deployment ([here](#helm-chart-parameters) the available parameters) 
 
-```
-helm add repo crs4 https://crs4.github.io/helm-charts/
-```
-
-Download the `values.yaml` file to customise your deployment:
-
-```
-curl https://raw.githubusercontent.com/deephealthproject/docker-backend/develop/k8s/deephealth-backend/values.yaml -o values.yaml
-```
--->
-
-Edit the ´k8s/values.yaml´ template to configure your deployment. In particular, you should set the storage classes to handle the persistence volumes of your deployment:
-
-```
-...
-# persistence class used by services
-storageClass: &servicesStorageClass default
-
-# persistence classes (ReadWriteMany accessMode required)
-datasetsStorageClass: *servicesStorageClass
-trainingStorageClass: *servicesStorageClass
-inferenceStorageClass: *servicesStorageClass
-...
-```
-
-Deploy on Kubernetes through `helm`:
+4. Deploy on Kubernetes through `helm`:
 
 ```
 helm install --name deephealth-backend k8s/deephealth-backend -f k8s/values.yaml
 ```
 
-<!--
-```
-helm install --name deephealth-backend crs4/deephealth-backend -f values.yaml
-```
--->
-
 Take a look at the deployment notes to know how to access services  (`helm status deephealth-backend`).
 
-parameters
-
-[parameters](#helm-chart-parameters)
 
 
-#### Access via Ingress
+### Access via Ingress
 
 If available an Ingress Controller on your Kubernetes cluster, you can access the back-end endpoint by setting the upper level `ingress` property on the `values.yaml` file:
 
@@ -96,7 +89,9 @@ ingress:
     - host: backend.172.30.20.10.nip.io
 ```
 
-#### Parameters
+
+
+### Parameters
 
 The following tables lists the main configurable parameters of the `deephealth-backend` chart and their default values. 
 
@@ -174,6 +169,8 @@ Below you can find the link to the available parameters for the remaining deploy
 
 2. Type `./setup.sh` to generate configuration files and generate the Docker images.
 
+
+
 ### Usage
 
 Type ``` docker-compose  up -d ``` to start all the services and after a while you should have the Back-end API up and running at http://<YOUR_HOST_IP>:<BACKEND_PORT> (http://localhost:8000 by default).
@@ -181,6 +178,8 @@ Type ``` docker-compose  up -d ``` to start all the services and after a while y
 Use `docker-compose logs [service]` to see the logs of the running services.
 
 Type `docker-compose down` to stop and remove all the containers in use.
+
+
 
 
 ## License
