@@ -2,10 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Set Django secret
-djangoSecret: "<DJANGO SECRET>" # generate your own Django secret
-
-
 # global settings
 global:
   debug: &debug True

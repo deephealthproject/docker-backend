@@ -14,9 +14,6 @@ global:
   # persistence class used by services
   storageClass: &globalStorageClass ""
 
-# Set Django secret
-djangoSecret: ""
-
 # Persistence settings
 # Notice that all the storage classes below
 # need to support the 'ReadWriteMany' access mode
@@ -36,7 +33,6 @@ persistence:
   staticFiles:
     storageClass: *globalStorageClass
     size: 10Mi
-
 
 # ServiceType of the Back-end EndPoint
 endpoint:

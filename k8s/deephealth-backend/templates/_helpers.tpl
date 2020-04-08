@@ -28,6 +28,14 @@ Create chart name and version as used by the chart label.
 
 
 {{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "deephealth-backend.djangoSecretKey" -}}
+{{- randAlphaNum 50 | b64enc -}}
+{{- end -}}
+
+
+{{/*
 Return Django admin password
 */}}
 {{- define "deephealth-backend.admin.password" -}}
