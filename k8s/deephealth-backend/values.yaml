@@ -8,7 +8,7 @@ fullnameOverride: ""
 
 # global settings
 global:
-  debug: &debug True
+  debug: &debug False
   # default pull policy for images
   imagePullPolicy: &imagePullPolicy "Always"
   # persistence class used by services
