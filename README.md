@@ -75,7 +75,7 @@ Take a look at the deployment notes to know how to access services  (`helm statu
 
 ### Access via Ingress
 
-If available an Ingress Controller on your Kubernetes cluster, you can access the back-end endpoint by setting the upper level `ingress` property on the `values.yaml` file:
+If an Ingress Controller is available on your Kubernetes cluster, you can access the back-end endpoint by setting the upper level `ingress` property on the `values.yaml` file.  Here is an example:
 
 ```
 ingress:
@@ -98,15 +98,15 @@ The following tables lists the main configurable parameters of the `deephealth-b
 |           Parameter                           |                    Description                                                                |            Default                     |
 |-----------------------------------------------|-----------------------------------------------------------------------------------------------|----------------------------------------|
 | `global.debug`                                | Enable/disable debug mode                                                                     |  `False`                               |
-| `global.storageClass`                         | Global storage class for dynamic provisioning                                                 |  `nil`                                 |
+| `global.storageClass`                         | Global storage class for dynamic provisioning                                                 |  `nil` (i.e., the default sc in your cluster) |
 | `global.imagePullPolicy`                      | Global image pull policy                                                                      |  `Always`                              |
 | `persistence.datasets.storageClass`           | Storage class used for datasets (requires support for `ReadWriteMany` access mode)            |  `*globalStorageClass`                 |
 | `persistence.datasets.path`                   | Path to mount the datasets volume at                                                          |  `/data/datasets`                      |
 | `persistence.datasets.size`                   | Size of the datasets volume                                                                   |  `1Gi`                                 |
-| `persistence.training.storageClass`           | Storage class used for training data (requires support for `ReadWriteMany` access mode)       |  `*globalStorageClass`                 |
+| `persistence.training.storageClass`           | Storage class used for training data (must support for `ReadWriteMany` access mode)       |  `*globalStorageClass`                 |
 | `persistence.training.path`                   | Path to mount the training data volume at                                                     |  `/data/training`                      |
 | `persistence.training.size`                   | Size of the training data volume                                                              |  `1Gi`                                 |
-| `persistence.inference.storageClass`          | Storage class used for inference data (requires support for `ReadWriteMany` access mode)      |  `*globalStorageClass`                 |
+| `persistence.inference.storageClass`          | Storage class used for inference data (must support for `ReadWriteMany` access mode)      |  `*globalStorageClass`                 |
 | `persistence.inference.path`                  | Path to mount the inference data volume at                                                    |  `/data/datasets`                      |
 | `persistence.inference.size`                  | Size of the inference data volume                                                             |  `1Gi`                                 |
 | `endpoint.service.type`                       | Kubernetes service type of the API Endpoint                                                   |  `NodePort`                            |
@@ -130,7 +130,7 @@ The following tables lists the main configurable parameters of the `deephealth-b
 | `celery.taskSerializer`                       | A list of comma-separated serializers to allow on Celery workers                              |  `json`                                |
 | `celery.resources`                            | CPU/Memory resource requests/limits of the celery worker replica                              |  `nil`                                 |
 | `celery.nodeSelector`                         | Node labels for pod assignment of the celery worker replicas                                  |  `nil`                                 |
-| `celery.tolerations`                          | Tollerations labels for pod assignment of the celery worker repliacas                         |  `nil`                                 |
+| `celery.tolerations`                          | Tolerations labels for pod assignment of the celery worker replicas                         |  `nil`                                 |
 | `celery.affinity`                             | Affinity labels for pod assignment of the celery worker replicas                              |  `nil`                                 |
 
 Below you can find the link to the available parameters for the remaining deployment components:
