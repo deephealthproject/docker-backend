@@ -68,18 +68,18 @@ Define admin credentials via environment variables.
 - name: ADMIN_USER
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-secrets
+      name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminUsername
 - name: ADMIN_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-secrets
+      name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminPassword
 {{- if .Values.backend.admin.email -}}
 - name: ADMIN_EMAIL
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-secrets
+      name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminEmail
 {{- end -}}
 {{- end -}}
@@ -123,12 +123,12 @@ Define environment variables in connection between some pods.
 - name: POSTGRES_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-postgresql
+      name: {{ include "deephealth-backend.postgresql.secretName" . }}
       key: postgresql-password
 - name: RABBITMQ_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-rabbitmq
+      name: {{ include "deephealth-backend.rabbitmq.secretName" . }}
       key: rabbitmq-password
 - name: DATABASE_URL
   value: psql://{{ .Values.postgresql.postgresqlUsername }}:$(POSTGRES_PASSWORD)@{{ include "deephealth-backend.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
@@ -161,7 +161,7 @@ Define shared volumes in connection between some pods.
 {{- define "deephealth-backend.common-volumes" -}}
 - name: backend-secrets
   secret:
-    secretName: {{ include "deephealth-backend.fullname" . }}-secrets
+    secretName: {{ include "deephealth-backend.django.secretName" . }}
     defaultMode: 0644
 - name: datasets-volume
   persistentVolumeClaim:
@@ -187,4 +187,38 @@ Define shared volumes in connection between some pods.
     claimName: data-{{ include "deephealth-backend.fullname" . }}-inference
     {{ end }}
     readOnly: false
+{{- end -}}
+
+
+{{/*
+Return PostgreSQL password
+*/}}
+{{- define "deephealth-backend.postgresql.password" -}}
+{{- if .Values.postgresql.postgresqlPassword -}}
+    {{- .Values.postgresql.postgresqlPassword -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return PostgreSQL password
+*/}}
+{{- define "deephealth-backend.postgresql.postgres-password" -}}
+{{- if .Values.postgresql.postgresqlPostgresPassword -}}
+    {{- .Values.postgresql.postgresqlPostgresPassword -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return PostgreSQL replication password
+*/}}
+{{- define "deephealth-backend.replication.password" -}}
+{{- if .Values.postgresql.replication.password -}}
+    {{- .Values.postgresql.replication.password -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
 {{- end -}}

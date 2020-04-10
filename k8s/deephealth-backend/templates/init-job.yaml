@@ -34,7 +34,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "deephealth-backend.fullname" . }}-postgresql
+                  name: {{ include "deephealth-backend.postgresql.secretName" . }}
                   key: postgresql-password
           volumeMounts:
             - name: backend-secrets
@@ -70,11 +70,11 @@ spec:
       volumes:
       - name: backend-secrets
         secret:
-          secretName: {{ include "deephealth-backend.fullname" . }}-secrets
+          secretName: {{ include "deephealth-backend.django.secretName" . }}
           defaultMode: 0644
       - name: nginx-static-files
         persistentVolumeClaim:
-          claimName: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+          claimName: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
           readOnly: false
     {{- with .Values.backend.nodeSelector }}
       nodeSelector:
