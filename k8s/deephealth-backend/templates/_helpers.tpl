@@ -84,6 +84,36 @@ Define admin credentials via environment variables.
 {{- end -}}
 {{- end -}}
 
+
+{{/*
+Define environment variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.django.secretName" -}}
+{{- printf "deephealth-backend-django-secrets" -}}
+{{- end -}}
+
+{{/*
+Define environment variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.postgresql.secretName" -}}
+{{- if .Values.postgresql.existingSecret -}}
+{{- printf "%s" .Values.postgresql.existingSecret -}}
+{{- else -}}
+{{- printf "%s-postgresql" .Release.Name -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Define environment variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.rabbitmq.secretName" -}}
+{{- if .Values.rabbitmq.rabbitmq.existingPasswordSecret -}}
+{{- printf "%s" .Values.rabbitmq.rabbitmq.existingPasswordSecret -}}
+{{- else -}}
+{{- printf "%s-rabbitmq" .Release.Name -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Define environment variables in connection between some pods.
 */}}
