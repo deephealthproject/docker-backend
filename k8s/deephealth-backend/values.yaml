@@ -132,7 +132,7 @@ nginx:
   serverBlockConfigMap: proxy-config
 
   # serverDataVolume
-  serverDataVolumeClaim: static-files
+  serverDataVolumeClaim: "data-{{ .Release.Name }}-static-files"
   serverDataVolumePath: /app/static
 
   ingress:
