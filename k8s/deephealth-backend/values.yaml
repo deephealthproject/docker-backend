@@ -227,6 +227,10 @@ broker: &broker
   
   service:
     port: 5672
+
+  rabbitmq:
+    existingPasswordSecret: deephealth-backend-rabbitmq-secrets
+    existingErlangSecret: deephealth-backend-rabbitmq-secrets
   
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -266,6 +270,9 @@ postgresql:
 
   service:
     port: 5432
+
+
+  existingSecret: deephealth-backend-postgresql-secrets
 
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
