@@ -38,13 +38,13 @@
 
    You can get the admin credentials by running the following commands:
 
-      ADMIN_USERNAME=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }}-secrets -o jsonpath="{.data.adminUsername}" | base64 --decode)
-      ADMIN_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }}-secrets -o jsonpath="{.data.adminPassword}" | base64 --decode)
+      ADMIN_USERNAME=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.django.secretName" . }} -o jsonpath="{.data.adminUsername}" | base64 --decode)
+      ADMIN_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.django.secretName" . }} -o jsonpath="{.data.adminPassword}" | base64 --decode)
 
 
 2. Get PostgreSQL credentials by running these commands:
    
-   POSTGRESQL_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }}-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+   POSTGRESQL_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.postgresql.secretName" . }} -o jsonpath="{.data.postgresql-password}" | base64 --decode)
    POSTGRESQL_USERNAME={{  printf "%s" .Values.postgresql.postgresqlUsername }}
    POSTGRESQL_DATABASE={{  printf "%s" .Values.postgresql.postgresqlDatabase }}
 
@@ -54,7 +54,7 @@
 
 3. Get RabbitMQ credentials by running these commands:
 
-   RABBITMQ_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }}-rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)
+   RABBITMQ_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.rabbitmq.secretName" . }} -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)
    RABBITMQ_USERNAME={{  printf "%s" .Values.broker.rabbitmq.username }}
    
    export RABBITMQ_SERVICE=$(kubectl get service --namespace {{ .Release.Namespace }} -l "app={{ include "deephealth-backend.name" . }}-rabbitmq" -o jsonpath="{.items[0].metadata.name}")
