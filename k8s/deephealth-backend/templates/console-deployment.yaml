@@ -34,7 +34,7 @@ spec:
       volumes:
         - name: nginx-static-files
           persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+            claimName: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
             readOnly: false
 {{ include "deephealth-backend.common-volumes" . | indent 8 }}
       {{- with .Values.backend.nodeSelector }}
