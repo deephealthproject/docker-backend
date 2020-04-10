@@ -252,7 +252,8 @@ postgresql:
   postgresqlDatabase: db
   # credentials
   postgresqlUsername: user
-  #postgresqlPassword: password
+  # postgresqlPassword: ""
+  # postgresqlPostgresPassword: ""
 
   image:
     debug: *debug
