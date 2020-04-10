@@ -14,25 +14,6 @@ global:
   # persistence class used by services
   storageClass: &globalStorageClass ""
 
-# Persistence settings
-# Notice that all the storage classes below
-# need to support the 'ReadWriteMany' access mode
-persistence:
-  datasets:
-    storageClass: *globalStorageClass
-    path: '/data/datasets'
-    size: 1Gi
-  training:
-    storageClass: *globalStorageClass
-    path: '/data/training'
-    size: 1Gi
-  inference:
-    storageClass: *globalStorageClass
-    path: '/data/inference'
-    size: 1Gi
-  staticFiles:
-    storageClass: *globalStorageClass
-    size: 10Mi
 
 # ServiceType of the Back-end EndPoint
 endpoint:
