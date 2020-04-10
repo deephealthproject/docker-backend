@@ -216,6 +216,11 @@ broker: &broker
   
   service:
     port: 5672
+
+  persistence:
+    storageClass: *globalStorageClass
+    size: 1Gi
+    # existingClaim: ""
   
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -254,6 +259,11 @@ postgresql:
 
   service:
     port: 5432
+
+  persistence:
+    storageClass: *globalStorageClass
+    size: 1Gi
+    # existingClaim: ""
 
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
