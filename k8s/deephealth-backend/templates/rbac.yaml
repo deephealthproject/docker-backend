@@ -3,12 +3,12 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: {{ include "deephealth-backend.name" . }}-role
   labels:
-      app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-role
-      helm.sh/chart: {{ include "deephealth-backend.chart" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-role
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 rules:
-- apiGroups: ["", "extensions", "apps", "batch"]
+- apiGroups: ["", "extensions", "apps", "batch", "secrets"]
   resources: ["*"]
   verbs: ["*"]
 

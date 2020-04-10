@@ -8,6 +8,11 @@ global:
   # default pull policy for images
   imagePullPolicy: &imagePullPolicy "Always"
   # persistence class used by services
+  storageClass: &globalStorageClass ""
+  # preserve secrets when a release is deleted
+  retainSecrets: True
+  # preserve PVC when a release is deleted
+  retainPVCs: True
 
 
 # ServiceType of the Back-end EndPoint
