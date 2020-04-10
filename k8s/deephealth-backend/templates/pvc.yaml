@@ -1,3 +1,4 @@
+{{- if not .Values.backend.persistence.datasets.existingClaim -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -12,11 +13,11 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.persistence.datasets.size }}
-    storageClassName: {{ .Values.persistence.datasets.storageClass }}
-
+        storage: {{ .Values.backend.persistence.datasets.size }}
+    storageClassName: {{ .Values.backend.persistence.datasets.storageClass }}
 ---
-
+{{- end -}}
+{{- if not .Values.backend.persistence.training.existingClaim -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -31,11 +32,11 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.persistence.training.size }}
-    storageClassName: {{ .Values.persistence.training.storageClass }}
-
+        storage: {{ .Values.backend.persistence.training.size }}
+    storageClassName: {{ .Values.backend.persistence.training.storageClass }}
 ---
-
+{{- end -}}
+{{- if not .Values.backend.persistence.inference.existingClaim -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -50,9 +51,8 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.persistence.inference.size }}
-    storageClassName: {{ .Values.persistence.inference.storageClass }}
-
+        storage: {{ .Values.backend.persistence.inference.size }}
+    storageClassName: {{ .Values.backend.persistence.inference.storageClass }}
 ---
 
 apiVersion: v1
@@ -69,5 +69,5 @@ spec:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.persistence.staticFiles.size }}
-    storageClassName: {{ .Values.persistence.staticFiles.storageClass }}
+        storage: {{ .Values.backend.persistence.staticFiles.size }}
+    storageClassName: {{ .Values.backend.persistence.staticFiles.storageClass }}

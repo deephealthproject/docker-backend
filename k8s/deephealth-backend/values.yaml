@@ -84,6 +84,30 @@ backend:
     port: 80
     containerPort: 8000
 
+  # Persistence settings
+  # Notice that all the storage classes below
+  # need to support the 'ReadWriteMany' access mode
+  persistence:
+    retainVolumes: false
+    datasets:
+      storageClass: *globalStorageClass
+      path: '/data/datasets'
+      size: 1Gi
+      # existingClaim: datasets
+    training:
+      storageClass: *globalStorageClass
+      path: '/data/training'
+      size: 1Gi
+      # existingClaim: training
+    inference:
+      storageClass: *globalStorageClass
+      path: '/data/inference'
+      size: 1Gi
+      # existingClaim: inference
+    staticFiles:
+      storageClass: *globalStorageClass
+      size: 10Mi
+
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little

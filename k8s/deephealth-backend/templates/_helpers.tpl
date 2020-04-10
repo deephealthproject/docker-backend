@@ -135,14 +135,26 @@ Define shared volumes in connection between some pods.
     defaultMode: 0644
 - name: datasets-volume
   persistentVolumeClaim:
-    claimName: {{ include "deephealth-backend.fullname" . }}-datasets
+    {{ if .Values.backend.persistence.datasets.existingClaim }}
+    claimName: {{ .Values.backend.persistence.datasets.existingClaim }}
+    {{ else }}
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-datasets
+    {{ end }}
     readOnly: false
 - name: training-volume
   persistentVolumeClaim:
-    claimName: {{ include "deephealth-backend.fullname" . }}-training
+    {{ if .Values.backend.persistence.training.existingClaim }}
+    claimName: {{ .Values.backend.persistence.training.existingClaim }}
+    {{ else }}
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-training
+    {{ end }}
     readOnly: false
 - name: inference-volume
   persistentVolumeClaim:
-    claimName: {{ include "deephealth-backend.fullname" . }}-inference
+    {{ if .Values.backend.persistence.inference.existingClaim }}
+    claimName: {{ .Values.backend.persistence.inference.existingClaim }}
+    {{ else }}
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-inference
+    {{ end }}
     readOnly: false
 {{- end -}}
