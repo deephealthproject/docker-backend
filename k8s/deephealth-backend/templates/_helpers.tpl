@@ -147,11 +147,11 @@ Define mount paths for shared volumes variables in connection between some pods.
   mountPath: "/app/config"
   subPath: config
 - name: datasets-volume
-  mountPath: {{ .Values.persistence.datasets.path }}
+  mountPath: {{ .Values.backend.persistence.datasets.path }}
 - name: training-volume
-  mountPath: {{ .Values.persistence.training.path }}
+  mountPath: {{ .Values.backend.persistence.training.path }}
 - name: inference-volume
-  mountPath: {{ .Values.persistence.inference.path }}
+  mountPath: {{ .Values.backend.persistence.inference.path }}
 {{- end -}}
 
 
