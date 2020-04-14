@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: console
-          image: {{ .Values.console.image.repository }}
+          image: {{ .Values.console.image.repository }}:{{ .Values.console.image.tag }}
           imagePullPolicy: {{ .Values.console.image.pullPolicy }}
           command: ["sleep","infinity"]
           env:
