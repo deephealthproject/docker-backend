@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
     helm.sh/hook: pre-delete
-    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-delete-policy: hook-succeeded{{ if not .Values.global.debug }},hook-failed{{ end }}
 spec:
   selector:
     matchLabels:
