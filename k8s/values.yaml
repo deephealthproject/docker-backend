@@ -6,7 +6,7 @@
 global:
   debug: &debug False
   # default pull policy for images
-  imagePullPolicy: &imagePullPolicy "Always"
+  imagePullPolicy: &imagePullPolicy "IfNotPresent"
   # persistence class used by services
   storageClass: &globalStorageClass ""
   # preserve secrets when a release is deleted
@@ -294,9 +294,9 @@ postgresql:
 console:
   enabled: *debug
   image:
-    repository: busybox
+    repository: crs4/k8s-tools
     tag: latest
-    pullPolicy: Always
+    pullPolicy: *imagePullPolicy
     debug: *debug
 
   replicaCount: 1

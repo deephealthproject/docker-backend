@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: console
           image: {{ .Values.console.image.repository }}
           imagePullPolicy: {{ .Values.console.image.pullPolicy }}
           command: ["sleep","infinity"]
