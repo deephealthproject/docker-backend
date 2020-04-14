@@ -60,7 +60,6 @@ backend:
   # Notice that all the storage classes below
   # need to support the 'ReadWriteMany' access mode
   persistence:
-    retainVolumes: false
     datasets:
       storageClass: *globalStorageClass
       path: '/data/datasets'
@@ -252,11 +251,10 @@ rabbitmq: *broker
 # PostgreSQL settings.
 # You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
-  nameOverride: "postgresql"
-  # DB
+  # database name
   postgresqlDatabase: db
   # credentials
-  postgresqlUsername: user
+  # postgresqlUsername: postgres
   # postgresqlPassword: ""
   # postgresqlPostgresPassword: ""
 
