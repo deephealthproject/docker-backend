@@ -4,10 +4,13 @@ kind: ConfigMap
 metadata:
   name: {{ include "deephealth-backend.fullname" . }}-nginx-proxy-config
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-nginx
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: proxy-configmap
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 data:
   backend.conf: |-
     # set upstream server

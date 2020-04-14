@@ -4,9 +4,12 @@ metadata:
   name: {{ include "deephealth-backend.fullname" . }}-backend
   labels:
     app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-backend
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: api-backend-service
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
   type: {{ .Values.backend.service.type }}
   ports:
@@ -26,9 +29,12 @@ metadata:
   name: {{ include "deephealth-backend.fullname" . }}-endpoint
   labels:
     app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-endpoint
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: api-backend-endpoint-service
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
   type: {{ .Values.endpoint.service.type }}
   ports:

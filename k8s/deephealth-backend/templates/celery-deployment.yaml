@@ -4,9 +4,12 @@ metadata:
   name: {{ include "deephealth-backend.fullname" . }}-celery
   labels:
     app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-celery
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: queue-processor
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
   replicas: {{ .Values.celery.replicaCount }}
   selector:

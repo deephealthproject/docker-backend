@@ -4,16 +4,16 @@ kind: PersistentVolumeClaim
 metadata:
   name: data-{{ include "deephealth-backend.fullname" . }}-datasets
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-datasets
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: backend-datasets
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
   annotations:
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
     helm.sh/resource-policy: keep
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-datasets
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
     accessModes:
     - ReadWriteMany
@@ -29,16 +29,16 @@ kind: PersistentVolumeClaim
 metadata:
   name: data-{{ include "deephealth-backend.fullname" . }}-training
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-training
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: backend-training-data
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
   annotations:
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
     helm.sh/resource-policy: keep
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-training
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
     accessModes:
     - ReadWriteMany
@@ -54,16 +54,16 @@ kind: PersistentVolumeClaim
 metadata:
   name: data-{{ include "deephealth-backend.fullname" . }}-inference
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-inference
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: backend-inference-data
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
   annotations:
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
     helm.sh/resource-policy: keep
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-inference
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
     accessModes:
     - ReadWriteMany
@@ -78,15 +78,15 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
   labels:
-    app.kubernetes.io/name: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: api-backend
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
   annotations:
     helm.sh/chart: {{ include "deephealth-backend.chart" . }}
-    app.kubernetes.io/name: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
     accessModes:
     - ReadWriteMany
