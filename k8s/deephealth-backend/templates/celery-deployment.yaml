@@ -27,12 +27,16 @@ spec:
           image: "crs4/k8s-wait-for:latest"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
+        - name: wait-for-rabbitmq
+          image: "crs4/k8s-wait-for:latest"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          args: ["service", "-lapp={{ include "deephealth-backend.fullname" . }}-rabbitmq"]
       containers:
         - name: {{ .Chart.Name }}-celery-worker
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           command: ["/bin/sh","-c"]
-          args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
+          args: ["python manage.py celery"]
           env:
 {{ include "deephealth-backend.common-env" . | indent 12 }}
           volumeMounts:
