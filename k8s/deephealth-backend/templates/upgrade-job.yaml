@@ -1,0 +1,89 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "deephealth-backend.fullname" . }}-upgrade-manager
+  labels:
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-upgrade-manager
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: upgrade-manager
+  annotations:
+    helm.sh/hook: post-upgrade, post-rollback
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-postgresql
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: 
+            - /bin/sh
+            - -c
+            - until PGPASSWORD=${POSTGRES_PASSWORD} psql -h "{{ include "deephealth-backend.fullname" . }}-postgresql" -U "{{ .Values.postgresql.postgresqlUsername }}" {{ .Values.postgresql.postgresqlDatabase }} -c '\q'; do 
+                >&2 echo "PostgreSQL is unavailable -- sleep 2 seconds and retry" ;
+                sleep 2 ;
+              done ;
+              echo "PostgreSQL ready"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "deephealth-backend.postgresql.secretName" . }}
+                  key: postgresql-password
+          volumeMounts:
+            - name: backend-secrets
+              mountPath: "/app/config"
+              subPath: config
+      containers:
+      - name: django-init
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        command: ["/bin/sh","-c"]
+        args: ["init.sh"]
+        env:
+{{ include "deephealth-backend.adminCredentials" . | indent 10 }}
+{{ include "deephealth-backend.common-env" . | indent 10 }}
+        volumeMounts:
+          - name: backend-secrets
+            mountPath: "/app/config"
+            subPath: config
+      - name: django-static
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        command: ["python","manage.py","collectstatic","--noinput"]
+        env:
+{{ include "deephealth-backend.adminCredentials" . | indent 10 }}
+{{ include "deephealth-backend.common-env" . | indent 10 }}
+        volumeMounts:
+          - name: backend-secrets
+            mountPath: "/app/config"
+            subPath: config
+          - name: nginx-static-files
+            mountPath: "/app/static"
+      restartPolicy: Never
+      volumes:
+      - name: backend-secrets
+        secret:
+          secretName: {{ include "deephealth-backend.django.secretName" . }}
+          defaultMode: 0644
+      - name: nginx-static-files
+        persistentVolumeClaim:
+          claimName: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
+          readOnly: false
+    {{- with .Values.backend.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.backend.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.backend.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+  backoffLimit: 4

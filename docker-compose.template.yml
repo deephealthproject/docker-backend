@@ -1,0 +1,94 @@
+version: '2.4'
+services:
+
+  app:
+    build:
+      context: docker
+      args:
+        DOCKER_LIBS_IMAGE: ${DOCKER_LIBS_IMAGE}
+        UID: ${UID}
+        GID: ${GID}
+    image: &app "dhealth/backend"
+    restart: "no"
+    user: "${UID}:${GID}"
+    runtime: ${DOCKER_RUNTIME}
+    command: ["/bin/bash","-c","init.sh && start.sh backend"]
+    env_file: &envfile
+      - settings.conf
+    environment:
+      - PYTHONPATH="$PYTHONPATH:.%"
+      - RABBITMQ_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+      - DATABASE_URL=psql://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@db:5432/${POSTGRESQL_DATABASE} # PostgreSQL DB
+      - POSTGRESQL_HOST=db
+    ports:
+      - "${BACKEND_PORT}:8000"
+    volumes:
+      ${BACKEND_VOLUME}
+      - ./.config:/app/config
+      - ./settings.conf:/app/settings.conf
+      - datasets:${DATASETS_DIR}
+      - training:${TRAINING_DIR}
+      - inference:${INFERENCE_DIR}
+    depends_on:
+      - broker
+      - db
+
+  worker:
+    build: docker
+    image: *app
+    restart: "no"
+    user: "${UID}:${GID}"
+    env_file: *envfile
+    environment:
+      - PYTHONPATH="$PYTHONPATH:.%"
+      - RABBITMQ_BROKER_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+      - RABBITMQ_HOST=broker
+      - RABBITMQ_PORT=5672
+      - POSTGRESQL_HOST=db
+      - DATABASE_URL=psql://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@db:5432/${POSTGRESQL_DATABASE} # PostgreSQL DB
+    command: ["start.sh","celery"]
+    volumes:
+      ${BACKEND_VOLUME}
+      - ./.config:/app/config
+      - ./settings.conf:/app/settings.conf
+      - datasets:${DATASETS_DIR}
+      - training:${TRAINING_DIR}
+      - inference:${INFERENCE_DIR}
+    depends_on:
+      - broker
+      - db
+
+  db:
+    image: bitnami/postgresql:latest
+    restart: "no"
+    env_file: *envfile
+    environment:
+      - PYTHONPATH="$PYTHONPATH:.%"
+    volumes:
+      ${BACKEND_VOLUME}
+      - ./.config:/app/config
+      - ./settings.conf:/app/settings.conf
+      - postgresql:/bitnami/postgresql
+
+  flower:
+    image: zoomeranalytics/flower:0.9.1-4.0.2
+    restart: "no"
+    env_file: *envfile
+    environment:
+      - FLOWER_BROKER=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@broker:5672
+    ports:
+      - "${FLOWER_PORT}:5555"
+    depends_on:
+      - broker
+
+  broker:
+    image: rabbitmq:3
+    env_file: *envfile
+#    ports:
+#      - 5672:5672
+
+volumes:
+  postgresql:
+  datasets:
+  inference:
+  training:
