@@ -2,7 +2,7 @@
 
 {{- if .Values.ingress.enabled }}
 
-1. The Back-end endpoint can be reached at:
+1. The Back end endpoint can be reached at:
 
 {{- range $host := .Values.ingress.hosts }}
   
@@ -18,23 +18,26 @@
       export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "deephealth-backend.fullname" . }}-endpoint)
       export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
    
-      echo "http://${NODE_IP}:${NODE_PORT}"
+      echo "http://${NODE_IP}:${NODE_PORT}/backend"
 
 {{- else if contains "LoadBalancer" .Values.endpoint.service.type }}
 
       NOTE: It may take a few minutes for the LoadBalancer IP to be available.
             You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "deephealth-backend.fullname" . }}-endpoint'
       export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }}-endpoint -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-      echo http://${SERVICE_IP}:{{ .Values.service.port }}
+      echo "http://${SERVICE_IP}:{{ .Values.service.port }}/backend"
 
-{{- else if contains "ClusterIP" .Values.endpoint.service.type }}
+{{- else }}
 
       export ENDPOINT_POD_NAME=$(kubectl get services --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "deephealth-backend.name" . }}-endpoint,app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-      echo "Visit http://127.0.0.1:8080 to use your application"
+      echo "Visit http://127.0.0.1:8080/backend to use your application"
       kubectl port-forward ${ENDPOINT_POD_NAME} 8080:80
 
 {{- end }}
 {{- end }}
+
+   You can access the application's administration interface by changing
+   `/backend` to `/admin` in the URL above.
 
    You can get the admin credentials by running the following commands:
 
