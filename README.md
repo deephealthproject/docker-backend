@@ -24,7 +24,8 @@ Keep on reading to see how to [deploy on Kubernetes](#deploy-on-kubernetes) or h
 1. Add the `helm-charts` repository:
 
 ```bash
-helm add repo dhealth https://deephealthproject.github.io/helm-charts/
+helm repo add dhealth https://deephealthproject.github.io/helm-charts/
+helm repo update
 ```
 
 2. Download the `values.yaml` template:
