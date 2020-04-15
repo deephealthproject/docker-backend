@@ -4,9 +4,12 @@ metadata:
   name: {{ include "deephealth-backend.fullname" . }}-celery
   labels:
     app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-celery
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: queue-processor
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
   replicas: {{ .Values.celery.replicaCount }}
   selector:
@@ -21,15 +24,19 @@ spec:
     spec:
       initContainers:
         - name: init
-          image: "kikkomep/k8s-wait-for:latest"
+          image: "crs4/k8s-wait-for:latest"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           args: ["job", "{{ include "deephealth-backend.fullname" . }}-init"]
+        - name: wait-for-rabbitmq
+          image: "crs4/k8s-wait-for:latest"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          args: ["service", "-lapp={{ include "deephealth-backend.fullname" . }}-rabbitmq"]
       containers:
         - name: {{ .Chart.Name }}-celery-worker
-          image: "{{ .Values.celery.image.repository }}:{{ .Values.celery.image.tag }}"
-          imagePullPolicy: {{ .Values.celery.image.pullPolicy }}
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           command: ["/bin/sh","-c"]
-          args: ["wait-for-it.sh -h {{ include "deephealth-backend.fullname" . }}-rabbitmq -p {{ .Values.broker.service.port }} && python manage.py celery"]
+          args: ["python manage.py celery"]
           env:
 {{ include "deephealth-backend.common-env" . | indent 12 }}
           volumeMounts:

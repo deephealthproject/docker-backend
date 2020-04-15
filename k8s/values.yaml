@@ -2,10 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-nameOverride: "deephealth-backend"
-fullnameOverride: ""
-
-
 # global settings
 global:
   debug: &debug False
@@ -19,24 +15,24 @@ global:
   retainPVCs: True
 
 
-
 # ServiceType of the Back-end EndPoint
-endpoint:
-  service:
-    type: NodePort
+# endpoint:
+#   service:
+#     type: NodePort
+
 
 # Set external access to the services
-ingress:
-  enabled: false
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: backend.127.0.0.1.nip.io
-      serviceName: endpoint # service name without Release.Name prefix
-      servicePort: 80
+# ingress:
+#   enabled: true
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     # kubernetes.io/tls-acme: "true"
+#   hosts:
+#     - host: backend.172.30.10.101.nip.io
+#       serviceName: endpoint # service name without ReleasePrefix
+#       servicePort: 80
 
-  tls: []
+#   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
@@ -48,27 +44,16 @@ backend:
     # password: admin
     # email: admin@domain.it
 
-  # Comma separated list of allowed hosts
-  allowedHosts: "*"
-
-  # Cross-Origin Resource Sharing (CORS) whitelist
-  corsOriginWhiteList: ""
-
-  # number of replicas
   replicaCount: 1
-  
-  # number of Gunicorn workers
-  workers: 3
 
   image: &backend_image
-    repository: dhealth/backend
+    # repository: dhealth/backend
     tag: 0.1
-    pullPolicy: *imagePullPolicy
 
-  service:
-    type: ClusterIP
-    port: 80
-    containerPort: 8000
+  # service:
+  #   type: NodePort
+  #   port: 80
+  #   containerPort: 8000
 
   # Persistence settings
   # Notice that all the storage classes below
@@ -92,6 +77,14 @@ backend:
     staticFiles:
       storageClass: *globalStorageClass
       size: 10Mi
+
+  workers: 3
+
+  # Comma separated list of allowed hosts
+  allowedHosts: "*"
+
+  # Cross-Origin Resource Sharing (CORS) whitelist
+  corsOriginWhiteList: ""
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
@@ -122,22 +115,17 @@ nginx:
   nameOverride: "nginx"
 
   image:
-    # repository: 
-    # tag: latest
-    pullPolicy: *imagePullPolicy
     debug: *debug
   
-  service:
-    type: ClusterIP
-    port: 80
-    #httpsPort: 443
+  # service:
+  #   type: NodePort
+  #   port: 80
+  #   #httpsPort: 443
 
-  # name of nginx-proxy configMap
-  serverBlockConfigMap: proxy-config
-
-  # serverDataVolume
-  serverDataVolumeClaim: "data-{{ .Release.Name }}-static-files"
-  serverDataVolumePath: /app/static
+  #serverBlockConfigMap: proxy-config
+  # serverDataVolumeClaim: static-files
+  # serverDataVolumePath: /app/static
+  
 
   ingress:
     # enabled: false
@@ -223,7 +211,6 @@ broker: &broker
 
   image:
     debug: *debug
-    pullPolicy: *imagePullPolicy
   
   rabbitmq:
     username: user
@@ -236,10 +223,6 @@ broker: &broker
     storageClass: *globalStorageClass
     size: 1Gi
     # existingClaim: ""
-
-  rabbitmq:
-    existingPasswordSecret: deephealth-backend-rabbitmq-secrets
-    existingErlangSecret: deephealth-backend-rabbitmq-secrets
   
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -266,8 +249,7 @@ rabbitmq: *broker
 # PostgreSQL settings.
 # You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
-  nameOverride: "postgresql"
-  # DB
+  # database name
   postgresqlDatabase: db
   # credentials
   # postgresqlUsername: postgres
@@ -276,7 +258,6 @@ postgresql:
 
   image:
     debug: *debug
-    pullPolicy: *imagePullPolicy
 
   service:
     port: 5432
@@ -285,8 +266,6 @@ postgresql:
     storageClass: *globalStorageClass
     size: 1Gi
     # existingClaim: ""
-
-  existingSecret: deephealth-backend-postgresql-secrets
 
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -310,11 +289,11 @@ postgresql:
 # Debug console settings
 console:
   enabled: *debug
-  image:
-    repository: crs4/k8s-tools
-    tag: 1.3
-    pullPolicy: *imagePullPolicy
-    debug: *debug
+  # image:
+  #   repository: crs4/k8s-tools
+  #   tag: 1.3
+  #   pullPolicy: *imagePullPolicy
+  #   debug: *debug
 
   replicaCount: 1
   

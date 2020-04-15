@@ -1,15 +1,18 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-init
+  name: {{ include "deephealth-backend.fullname" . }}-upgrade-manager
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-init
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-upgrade-manager
     app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/version: {{ .Chart.Version }}
-    app.kubernetes.io/component: initialization-manager
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/component: upgrade-manager
+  annotations:
+    helm.sh/hook: post-upgrade, post-rollback
+    helm.sh/hook-delete-policy: hook-succeeded
 spec:
   template:
     spec:

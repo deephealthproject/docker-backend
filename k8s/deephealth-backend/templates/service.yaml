@@ -1,12 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}
+  name: {{ include "deephealth-backend.fullname" . }}-backend
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-backend
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: api-backend-service
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
   type: {{ .Values.backend.service.type }}
   ports:
@@ -15,7 +18,7 @@ spec:
       protocol: TCP
       name: backend-port
   selector:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-backend
     app.kubernetes.io/instance: {{ .Release.Name }}
 
 ---
@@ -23,19 +26,22 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-proxy
+  name: {{ include "deephealth-backend.fullname" . }}-endpoint
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-endpoint
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: api-backend-endpoint-service
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
-  type: {{ .Values.backend.service.type }}
+  type: {{ .Values.endpoint.service.type }}
   ports:
     - port: 80
       targetPort: 8000
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-nginx
+    app.kubernetes.io/name: nginx
     app.kubernetes.io/instance: {{ .Release.Name }}

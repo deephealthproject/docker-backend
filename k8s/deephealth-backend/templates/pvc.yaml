@@ -1,73 +1,96 @@
+{{- if not .Values.backend.persistence.datasets.existingClaim -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-datasets
+  name: data-{{ include "deephealth-backend.fullname" . }}-datasets
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-datasets
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: backend-datasets
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+  annotations:
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    helm.sh/resource-policy: keep
 spec:
     accessModes:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.global.datasetsStorageSize }}
-    storageClassName: {{ .Values.global.datasetsStorageClass }}
-
+        storage: {{ .Values.backend.persistence.datasets.size }}
+    storageClassName: {{ .Values.backend.persistence.datasets.storageClass }}
 ---
-
+{{- end -}}
+{{- if not .Values.backend.persistence.training.existingClaim -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-training
+  name: data-{{ include "deephealth-backend.fullname" . }}-training
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-training
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: backend-training-data
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+  annotations:
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    helm.sh/resource-policy: keep
 spec:
     accessModes:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.global.trainingStorageSize }}
-    storageClassName: {{ .Values.global.trainingStorageClass }}
-
+        storage: {{ .Values.backend.persistence.training.size }}
+    storageClassName: {{ .Values.backend.persistence.training.storageClass }}
 ---
-
+{{- end -}}
+{{- if not .Values.backend.persistence.inference.existingClaim -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-inference
+  name: data-{{ include "deephealth-backend.fullname" . }}-inference
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-inference
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: backend-inference-data
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+  annotations:
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    helm.sh/resource-policy: keep
 spec:
     accessModes:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.global.inferenceStorageSize }}
-    storageClassName: {{ .Values.global.inferenceStorageClass }}
-
+        storage: {{ .Values.backend.persistence.inference.size }}
+    storageClassName: {{ .Values.backend.persistence.inference.storageClass }}
 ---
-
+{{- end -}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+  name: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-{{ .Values.nginx.serverDataVolumeClaim }}
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: api-backend
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+  annotations:
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
     accessModes:
     - ReadWriteMany
     resources:
       requests:
-        storage: {{ .Values.nginx.staticFilesVolumeSize }}
-    storageClassName: {{ .Values.nginx.staticFilesStorageClass }}
+        storage: {{ .Values.backend.persistence.staticFiles.size }}
+    storageClassName: {{ .Values.backend.persistence.staticFiles.storageClass }}

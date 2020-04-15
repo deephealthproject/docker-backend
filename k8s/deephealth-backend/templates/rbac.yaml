@@ -3,12 +3,14 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: {{ include "deephealth-backend.name" . }}-role
   labels:
-      app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-role
-      helm.sh/chart: {{ include "deephealth-backend.chart" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 rules:
-- apiGroups: ["", "extensions", "apps", "batch"]
+- apiGroups: ["", "extensions", "apps", "batch", "secrets"]
   resources: ["*"]
   verbs: ["*"]
 
@@ -19,10 +21,12 @@ kind: RoleBinding
 metadata:
   name: {{ include "deephealth-backend.name" . }}-rbac
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-rbac
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 subjects:
   - kind: ServiceAccount
     name: default

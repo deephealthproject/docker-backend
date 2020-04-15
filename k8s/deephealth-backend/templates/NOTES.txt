@@ -1,21 +1,66 @@
-1. Get the application URL by running these commands:
+
+
 {{- if .Values.ingress.enabled }}
+
+1. The Back end endpoint can be reached at:
+
 {{- range $host := .Values.ingress.hosts }}
-  {{- range .paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
-  {{- end }}
+  
+   * http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}
+  
 {{- end }}
-{{- else if contains "NodePort" .Values.backend.service.type }}
-  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "deephealth-backend.fullname" . }})
-  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
-  echo http://$NODE_IP:$NODE_PORT
-{{- else if contains "LoadBalancer" .Values.backend.service.type }}
-     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "deephealth-backend.fullname" . }}'
-  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo http://$SERVICE_IP:{{ .Values.service.port }}
-{{- else if contains "ClusterIP" .Values.backend.service.type }}
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "deephealth-backend.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
-  kubectl port-forward $POD_NAME 8080:80
+{{- else }}
+
+1. Get the application URL by running these commands:
+
+{{- if contains "NodePort" .Values.endpoint.service.type }}
+
+      export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "deephealth-backend.fullname" . }}-endpoint)
+      export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+   
+      echo "http://${NODE_IP}:${NODE_PORT}/backend"
+
+{{- else if contains "LoadBalancer" .Values.endpoint.service.type }}
+
+      NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+            You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "deephealth-backend.fullname" . }}-endpoint'
+      export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.fullname" . }}-endpoint -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+      echo "http://${SERVICE_IP}:{{ .Values.service.port }}/backend"
+
+{{- else }}
+
+      export ENDPOINT_POD_NAME=$(kubectl get services --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "deephealth-backend.name" . }}-endpoint,app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+      echo "Visit http://127.0.0.1:8080/backend to use your application"
+      kubectl port-forward ${ENDPOINT_POD_NAME} 8080:80
+
 {{- end }}
+{{- end }}
+
+   You can access the application's administration interface by changing
+   `/backend` to `/admin` in the URL above.
+
+   You can get the admin credentials by running the following commands:
+
+      ADMIN_USERNAME=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.django.secretName" . }} -o jsonpath="{.data.adminUsername}" | base64 --decode)
+      ADMIN_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.django.secretName" . }} -o jsonpath="{.data.adminPassword}" | base64 --decode)
+
+
+2. Get PostgreSQL credentials by running these commands:
+   
+   POSTGRESQL_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.postgresql.secretName" . }} -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+   POSTGRESQL_USERNAME={{  printf "%s" .Values.postgresql.postgresqlUsername }}
+   POSTGRESQL_DATABASE={{  printf "%s" .Values.postgresql.postgresqlDatabase }}
+
+   export POSTGRESQL_SERVICE=$(kubectl get service --namespace {{ .Release.Namespace }} -l "app={{ include "deephealth-backend.name" . }}-postgresql" -o jsonpath="{.items[0].metadata.name}")
+   kubectl port-forward service/${POSTGRESQL_SERVICE} {{ .Values.postgresql.service.port }}:{{ .Values.postgresql.service.port }}
+
+
+3. Get RabbitMQ credentials by running these commands:
+
+   RABBITMQ_PASSWORD=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "deephealth-backend.rabbitmq.secretName" . }} -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)
+   RABBITMQ_USERNAME={{  printf "%s" .Values.broker.rabbitmq.username }}
+   
+   export RABBITMQ_SERVICE=$(kubectl get service --namespace {{ .Release.Namespace }} -l "app={{ include "deephealth-backend.name" . }}-rabbitmq" -o jsonpath="{.items[0].metadata.name}")
+   kubectl port-forward service/${POSTGRESQL_SERVICE} {{ .Values.broker.service.port }}:{{ .Values.broker.service.port }}
+   
+   
