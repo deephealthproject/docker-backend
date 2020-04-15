@@ -2,33 +2,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Set Django secret
-djangoSecret: "<DJANGO SECRET>" # generate your own Django secret
-
-# Set data paths
-dataPaths:
-  datasets: '/data/datasets'
-  training: '/data/training'
-  inference: '/data/inference'
-
 # global settings
 global:
-  debug: &debug True
-  # static files settings
-  staticUrl: '/static/'
-  staticPath: '/app/static/'
+  debug: &debug False
   # default pull policy for images
-  imagePullPolicy: &imagePullPolicy "Always"
-  # persistence class
-  storageClass: default
-  # persistence class with ReadWriteMany capability
-  datasetsStorageClass: csi-cephfs
-  trainingStorageClass: csi-cephfs
-  inferenceStorageClass: csi-cephfs
-  # size of data volumes
-  datasetsStorageSize: 500Mi
-  trainingStorageSize: 500Mi
-  inferenceStorageSize: 500Mi
+  imagePullPolicy: &imagePullPolicy "IfNotPresent"
+  # persistence class used by services
+  storageClass: &globalStorageClass ""
+  # preserve secrets when a release is deleted
+  retainSecrets: True
+  # preserve PVC when a release is deleted
+  retainPVCs: True
 
 
 # ServiceType of the Back-end EndPoint
@@ -45,7 +29,7 @@ global:
 #     # kubernetes.io/tls-acme: "true"
 #   hosts:
 #     - host: backend.172.30.10.101.nip.io
-#       serviceName: deephealth-backend-endpoint # service name without ReleasePrefix
+#       serviceName: endpoint # service name without ReleasePrefix
 #       servicePort: 80
 
 #   tls: []
@@ -65,12 +49,34 @@ backend:
   image: &backend_image
     # repository: dhealth/backend
     tag: 0.1
-    pullPolicy: Always
 
   # service:
   #   type: NodePort
   #   port: 80
   #   containerPort: 8000
+
+  # Persistence settings
+  # Notice that all the storage classes below
+  # need to support the 'ReadWriteMany' access mode
+  persistence:
+    datasets:
+      storageClass: *globalStorageClass
+      path: '/data/datasets'
+      size: 1Gi
+      # existingClaim: datasets
+    training:
+      storageClass: *globalStorageClass
+      path: '/data/training'
+      size: 1Gi
+      # existingClaim: training
+    inference:
+      storageClass: *globalStorageClass
+      path: '/data/inference'
+      size: 1Gi
+      # existingClaim: inference
+    staticFiles:
+      storageClass: *globalStorageClass
+      size: 10Mi
 
   workers: 3
 
@@ -109,7 +115,6 @@ nginx:
   nameOverride: "nginx"
 
   image:
-    pullPolicy: Always
     debug: *debug
   
   # service:
@@ -118,9 +123,9 @@ nginx:
   #   #httpsPort: 443
 
   #serverBlockConfigMap: proxy-config
-  staticFilesStorageClass: csi-cephfs
-  #serverDataVolumeClaim: {{ include "deephealth-backend.fullname" . }}-static-files
-  serverDataVolumePath: /app/static
+  # serverDataVolumeClaim: static-files
+  # serverDataVolumePath: /app/static
+  
 
   ingress:
     # enabled: false
@@ -154,10 +159,7 @@ nginx:
 # Celery settings
 celery:
 
-  image: *backend_image
-
   acceptContent: 'json' # list of comma separated values
-  resultBackend: 'db+sqlite:///results.sqlite'
   taskSerializer: 'json'
   
   service:
@@ -216,6 +218,11 @@ broker: &broker
   
   service:
     port: 5672
+
+  persistence:
+    storageClass: *globalStorageClass
+    size: 1Gi
+    # existingClaim: ""
   
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -242,18 +249,23 @@ rabbitmq: *broker
 # PostgreSQL settings.
 # You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
-  nameOverride: "postgresql"
-  # DB
+  # database name
   postgresqlDatabase: db
   # credentials
-  postgresqlUsername: user
-  #postgresqlPassword: password
+  # postgresqlUsername: postgres
+  # postgresqlPassword: ""
+  # postgresqlPostgresPassword: ""
 
   image:
     debug: *debug
 
   service:
     port: 5432
+
+  persistence:
+    storageClass: *globalStorageClass
+    size: 1Gi
+    # existingClaim: ""
 
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -277,11 +289,11 @@ postgresql:
 # Debug console settings
 console:
   enabled: *debug
-  image:
-    repository: busybox
-    tag: latest
-    pullPolicy: Always
-    debug: *debug
+  # image:
+  #   repository: crs4/k8s-tools
+  #   tag: 1.3
+  #   pullPolicy: *imagePullPolicy
+  #   debug: *debug
 
   replicaCount: 1
   

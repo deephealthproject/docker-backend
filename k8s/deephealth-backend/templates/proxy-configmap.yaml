@@ -4,10 +4,13 @@ kind: ConfigMap
 metadata:
   name: {{ include "deephealth-backend.fullname" . }}-nginx-proxy-config
   labels:
-    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-nginx
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: proxy-configmap
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 data:
   backend.conf: |-
     # set upstream server
@@ -28,8 +31,8 @@ data:
       keepalive_timeout 60;
 
       # set localtion for static files
-      location {{ .Values.global.staticUrl }} {
-        alias {{ .Values.global.staticPath }};
+      location {{ include "deephealth-backend.static_files.url" . }} {
+        alias {{ include "deephealth-backend.static_files.path" . }};
       }
 
       # set proxy location

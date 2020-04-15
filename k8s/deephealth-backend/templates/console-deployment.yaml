@@ -5,9 +5,12 @@ metadata:
   name: {{ include "deephealth-backend.fullname" . }}-console
   labels:
     app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-console
-    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
+    app.kubernetes.io/part-of: {{ include "deephealth-backend.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    app.kubernetes.io/component: debug-console
+    helm.sh/chart: {{ include "deephealth-backend.chart" . }}
 spec:
   replicas: {{ .Values.console.replicaCount }}
   selector:
@@ -21,8 +24,8 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: {{ .Values.console.image.repository }}
+        - name: console
+          image: {{ .Values.console.image.repository }}:{{ .Values.console.image.tag }}
           imagePullPolicy: {{ .Values.console.image.pullPolicy }}
           command: ["sleep","infinity"]
           env:
@@ -34,7 +37,7 @@ spec:
       volumes:
         - name: nginx-static-files
           persistentVolumeClaim:
-            claimName: {{ include "deephealth-backend.fullname" . }}-nginx-{{ .Values.nginx.serverDataVolumeClaim }}
+            claimName: {{ tpl .Values.nginx.serverDataVolumeClaim . }}
             readOnly: false
 {{ include "deephealth-backend.common-volumes" . | indent 8 }}
       {{- with .Values.backend.nodeSelector }}

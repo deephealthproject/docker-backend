@@ -28,6 +28,14 @@ Create chart name and version as used by the chart label.
 
 
 {{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "deephealth-backend.djangoSecretKey" -}}
+{{- randAlphaNum 50 | b64enc -}}
+{{- end -}}
+
+
+{{/*
 Return Django admin password
 */}}
 {{- define "deephealth-backend.admin.password" -}}
@@ -39,25 +47,70 @@ Return Django admin password
 {{- end -}}
 
 {{/*
+Return Django static_files url
+*/}}
+{{- define "deephealth-backend.static_files.url" -}}
+/static/
+{{- end -}}
+
+{{/*
+Return Django static_files path
+*/}}
+{{- define "deephealth-backend.static_files.path" -}}
+{{- $url := .Values.nginx.serverDataVolumePath | trimSuffix "/" -}}
+{{- printf "%s/" $url -}}
+{{- end -}}
+
+{{/*
 Define admin credentials via environment variables.
 */}}
 {{- define "deephealth-backend.adminCredentials" -}}
 - name: ADMIN_USER
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-secrets
+      name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminUsername
 - name: ADMIN_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-secrets
+      name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminPassword
 {{- if .Values.backend.admin.email -}}
 - name: ADMIN_EMAIL
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-secrets
+      name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminEmail
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Define environment variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.django.secretName" -}}
+{{- printf "deephealth-backend-django-secrets" -}}
+{{- end -}}
+
+{{/*
+Define environment variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.postgresql.secretName" -}}
+{{- if .Values.postgresql.existingSecret -}}
+{{- printf "%s" .Values.postgresql.existingSecret -}}
+{{- else -}}
+{{- printf "%s-postgresql" .Release.Name -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Define environment variables in connection between some pods.
+*/}}
+{{- define "deephealth-backend.rabbitmq.secretName" -}}
+{{- if .Values.rabbitmq.rabbitmq.existingPasswordSecret -}}
+{{- printf "%s" .Values.rabbitmq.rabbitmq.existingPasswordSecret -}}
+{{- else -}}
+{{- printf "%s-rabbitmq" .Release.Name -}}
 {{- end -}}
 {{- end -}}
 
@@ -70,15 +123,17 @@ Define environment variables in connection between some pods.
 - name: POSTGRES_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-postgresql
+      name: {{ include "deephealth-backend.postgresql.secretName" . }}
       key: postgresql-password
 - name: RABBITMQ_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ include "deephealth-backend.fullname" . }}-rabbitmq
+      name: {{ include "deephealth-backend.rabbitmq.secretName" . }}
       key: rabbitmq-password
 - name: DATABASE_URL
   value: psql://{{ .Values.postgresql.postgresqlUsername }}:$(POSTGRES_PASSWORD)@{{ include "deephealth-backend.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
+- name: CELERY_RESULT_BACKEND
+  value: db+postgresql://{{ .Values.postgresql.postgresqlUsername }}:$(POSTGRES_PASSWORD)@{{ include "deephealth-backend.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
 - name: RABBITMQ_BROKER_URL
   value: amqp://{{ .Values.broker.rabbitmq.username }}:$(RABBITMQ_PASSWORD)@{{ include "deephealth-backend.fullname" . }}-rabbitmq:{{ .Values.broker.service.port }}
 {{- end -}}
@@ -92,11 +147,11 @@ Define mount paths for shared volumes variables in connection between some pods.
   mountPath: "/app/config"
   subPath: config
 - name: datasets-volume
-  mountPath: {{ .Values.dataPaths.datasets }}
+  mountPath: {{ .Values.backend.persistence.datasets.path }}
 - name: training-volume
-  mountPath: {{ .Values.dataPaths.training }}
+  mountPath: {{ .Values.backend.persistence.training.path }}
 - name: inference-volume
-  mountPath: {{ .Values.dataPaths.inference }}
+  mountPath: {{ .Values.backend.persistence.inference.path }}
 {{- end -}}
 
 
@@ -106,18 +161,64 @@ Define shared volumes in connection between some pods.
 {{- define "deephealth-backend.common-volumes" -}}
 - name: backend-secrets
   secret:
-    secretName: {{ include "deephealth-backend.fullname" . }}-secrets
+    secretName: {{ include "deephealth-backend.django.secretName" . }}
     defaultMode: 0644
 - name: datasets-volume
   persistentVolumeClaim:
-    claimName: {{ include "deephealth-backend.fullname" . }}-datasets
+    {{ if .Values.backend.persistence.datasets.existingClaim }}
+    claimName: {{ .Values.backend.persistence.datasets.existingClaim }}
+    {{ else }}
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-datasets
+    {{ end }}
     readOnly: false
 - name: training-volume
   persistentVolumeClaim:
-    claimName: {{ include "deephealth-backend.fullname" . }}-training
+    {{ if .Values.backend.persistence.training.existingClaim }}
+    claimName: {{ .Values.backend.persistence.training.existingClaim }}
+    {{ else }}
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-training
+    {{ end }}
     readOnly: false
 - name: inference-volume
   persistentVolumeClaim:
-    claimName: {{ include "deephealth-backend.fullname" . }}-inference
+    {{ if .Values.backend.persistence.inference.existingClaim }}
+    claimName: {{ .Values.backend.persistence.inference.existingClaim }}
+    {{ else }}
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-inference
+    {{ end }}
     readOnly: false
+{{- end -}}
+
+
+{{/*
+Return PostgreSQL password
+*/}}
+{{- define "deephealth-backend.postgresql.password" -}}
+{{- if .Values.postgresql.postgresqlPassword -}}
+    {{- .Values.postgresql.postgresqlPassword -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return PostgreSQL password
+*/}}
+{{- define "deephealth-backend.postgresql.postgres-password" -}}
+{{- if .Values.postgresql.postgresqlPostgresPassword -}}
+    {{- .Values.postgresql.postgresqlPostgresPassword -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return PostgreSQL replication password
+*/}}
+{{- define "deephealth-backend.replication.password" -}}
+{{- if .Values.postgresql.replication.password -}}
+    {{- .Values.postgresql.replication.password -}}
+{{- else -}}
+    {{- randAlphaNum 10 -}}
+{{- end -}}
 {{- end -}}
