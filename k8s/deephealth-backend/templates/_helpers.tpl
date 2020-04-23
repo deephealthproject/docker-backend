@@ -54,6 +54,13 @@ Return Django static_files url
 {{- end -}}
 
 {{/*
+Return Django media_files url
+*/}}
+{{- define "deephealth-backend.media_files.url" -}}
+/data/
+{{- end -}}
+
+{{/*
 Return Django static_files path
 */}}
 {{- define "deephealth-backend.static_files.path" -}}
