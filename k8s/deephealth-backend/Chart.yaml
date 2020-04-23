@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "b8ee98c"
 description: A Helm chart for Kubernetes
 name: deephealth-backend
-version: 0.1.0
+version: 0.1.1
