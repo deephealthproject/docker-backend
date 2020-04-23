@@ -54,6 +54,13 @@ Return Django static_files url
 {{- end -}}
 
 {{/*
+Return Django media_files url
+*/}}
+{{- define "deephealth-backend.media_files.url" -}}
+/data/
+{{- end -}}
+
+{{/*
 Return Django static_files path
 */}}
 {{- define "deephealth-backend.static_files.path" -}}
@@ -146,12 +153,8 @@ Define mount paths for shared volumes variables in connection between some pods.
 - name: backend-secrets
   mountPath: "/app/config"
   subPath: config
-- name: datasets-volume
-  mountPath: {{ .Values.backend.persistence.datasets.path }}
-- name: training-volume
-  mountPath: {{ .Values.backend.persistence.training.path }}
-- name: inference-volume
-  mountPath: {{ .Values.backend.persistence.inference.path }}
+- name: backend-data-volume
+  mountPath: {{ .Values.backend.persistence.data.path }}
 {{- end -}}
 
 
@@ -163,28 +166,12 @@ Define shared volumes in connection between some pods.
   secret:
     secretName: {{ include "deephealth-backend.django.secretName" . }}
     defaultMode: 0644
-- name: datasets-volume
+- name: backend-data-volume
   persistentVolumeClaim:
-    {{ if .Values.backend.persistence.datasets.existingClaim }}
-    claimName: {{ .Values.backend.persistence.datasets.existingClaim }}
+    {{ if .Values.backend.persistence.data.existingClaim }}
+    claimName: {{ .Values.backend.persistence.data.existingClaim }}
     {{ else }}
-    claimName: data-{{ include "deephealth-backend.fullname" . }}-datasets
-    {{ end }}
-    readOnly: false
-- name: training-volume
-  persistentVolumeClaim:
-    {{ if .Values.backend.persistence.training.existingClaim }}
-    claimName: {{ .Values.backend.persistence.training.existingClaim }}
-    {{ else }}
-    claimName: data-{{ include "deephealth-backend.fullname" . }}-training
-    {{ end }}
-    readOnly: false
-- name: inference-volume
-  persistentVolumeClaim:
-    {{ if .Values.backend.persistence.inference.existingClaim }}
-    claimName: {{ .Values.backend.persistence.inference.existingClaim }}
-    {{ else }}
-    claimName: data-{{ include "deephealth-backend.fullname" . }}-inference
+    claimName: data-{{ include "deephealth-backend.fullname" . }}-backend
     {{ end }}
     readOnly: false
 {{- end -}}
