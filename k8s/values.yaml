@@ -59,21 +59,11 @@ backend:
   # Notice that all the storage classes below
   # need to support the 'ReadWriteMany' access mode
   persistence:
-    datasets:
+    data:
       storageClass: *globalStorageClass
-      path: '/data/datasets'
-      size: 1Gi
+      path: '/data'
+      size: 10Gi
       # existingClaim: datasets
-    training:
-      storageClass: *globalStorageClass
-      path: '/data/training'
-      size: 1Gi
-      # existingClaim: training
-    inference:
-      storageClass: *globalStorageClass
-      path: '/data/inference'
-      size: 1Gi
-      # existingClaim: inference
     staticFiles:
       storageClass: *globalStorageClass
       size: 10Mi
