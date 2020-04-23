@@ -62,7 +62,7 @@ backend:
 
   image: &backend_image
     repository: dhealth/backend
-    tag: 0.1
+    tag: b8ee98c
     pullPolicy: *imagePullPolicy
 
   service:
