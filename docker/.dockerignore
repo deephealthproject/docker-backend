@@ -1,5 +1,7 @@
-.DS_Store
-#.git
-#.gitignore
-.env
-venv
+**/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/.DS_Store
+**/.env
+**/venv
