@@ -56,9 +56,9 @@ RUN \
     && chown -R ${USERNAME} ${DATASETS_DIR} ${TRAINING_DIR} ${INFERENCE_DIR} 
 
 # Declare data volumes
-VOLUME ["${DATASETS_DIR}"]
-VOLUME ["${INFERENCE_DIR}"]
-VOLUME ["${TRAINING_DIR}"]
+#VOLUME ["${DATASETS_DIR}"]
+#VOLUME ["${INFERENCE_DIR}"]
+#VOLUME ["${TRAINING_DIR}"]
 
 # Set the default user
 USER ${USERNAME}
