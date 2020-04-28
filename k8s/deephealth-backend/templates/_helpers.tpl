@@ -157,6 +157,21 @@ Define mount paths for shared volumes variables in connection between some pods.
   mountPath: {{ .Values.backend.persistence.data.path }}
 {{- end -}}
 
+{{/*
+Check if using GPU resources.
+*/}}
+{{- define "deephealth-backend.gpu-enabled" -}}
+{{- if .Values.backend.resources -}}
+{{- if hasKey .Values.backend.resources.limits "nvidia.com/gpu" -}}
+{{- printf "true" -}}
+{{- else -}}
+{{- printf "false" -}}
+{{- end -}}
+{{- else -}}
+{{- printf "false" -}}
+{{- end -}}
+{{- end -}}
+
 
 {{/*
 Define shared volumes in connection between some pods.
