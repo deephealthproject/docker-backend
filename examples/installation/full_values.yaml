@@ -1,0 +1,329 @@
+
+# Example chart values for a deployment of the Deephealth back-end
+#
+# This is a YAML-formatted file.  See the chart documentation
+# for a full explanation of the meaning of the various properties.
+
+# global settings
+global:
+  debug: &debug True
+  # default pull policy for images
+  imagePullPolicy: &imagePullPolicy "IfNotPresent"
+  # persistence class used by services.  To be used by backend
+  # and celery workers it must support RWX access.
+  storageClass: &globalStorageClass "csi-cephfs"
+  # preserve secrets when a release is deleted
+  retainSecrets: False
+  # preserve PVC when a release is deleted
+  retainPVCs: True
+
+
+# ServiceType of the Back-end EndPoint
+# endpoint:
+#   service:
+#     type: NodePort
+
+
+# Set external access to the services
+# ingress:
+#   enabled: true
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     # kubernetes.io/tls-acme: "true"
+#   hosts:
+#     - host: backend.172.30.10.101.nip.io
+#       serviceName: endpoint # service name without ReleasePrefix
+#       servicePort: 80
+
+#   tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# Backend.  The web service contacted by the users.
+backend:
+  # Admin account
+  admin:
+    username: admin
+    password: "yourfancypassword"
+    # email: admin@domain.it
+
+  replicaCount: 1
+
+  image: &backend_image
+    # repository: dhealth/backend
+    tag: 2fd828d8
+    pullPolicy: *imagePullPolicy
+
+  # service:
+  #   type: NodePort
+  #   port: 80
+  #   containerPort: 8000
+
+  # Persistence settings
+  # Notice that all the storage classes below
+  # need to support the 'ReadWriteMany' access mode
+  persistence:
+    data:
+      storageClass: *globalStorageClass
+      path: '/data'
+      size: 1000Gi
+    staticFiles:
+      storageClass: *globalStorageClass
+      size: 10Mi
+
+  workers: 3
+
+  # Comma separated list of allowed hosts
+  allowedHosts: "*"
+
+  # Cross-Origin Resource Sharing (CORS) whitelist
+  corsOriginWhiteList: ""
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # To use GPU you need to install 
+    # https://github.com/NVIDIA/k8s-device-plugin) 
+    # on your k8s Cluster 
+    # limits:
+    #   nvidia.com/gpu: 2 # requesting 2 GPUs
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+
+# nginx settings.  Serves the front-end code.
+nginx:
+  nameOverride: "nginx"
+
+  image:
+    debug: *debug
+  
+  # service:
+  #   type: NodePort
+  #   port: 80
+  #   #httpsPort: 443
+
+  #serverBlockConfigMap: proxy-config
+  # serverDataVolumeClaim: static-files
+  # serverDataVolumePath: /app/static
+  
+
+  ingress:
+    # enabled: false
+    # hostname: nginx.backend.172.30.10.101.nip.io
+    # annotations:
+    #   kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # hosts:
+    #   - host: 
+    #       name: pippo.backend.172.30.10.101.nip.io
+    #       path: /
+
+    tls: []
+    # tls:
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+# Celery.  These are the actual worker pods
+celery:
+  service:
+    # type: ClusterIP
+    # port: 80
+    containerPort: 5432
+
+  # ingress:
+  #   enabled: true
+  #   annotations:
+  #     kubernetes.io/ingress.class: nginx
+  #     # kubernetes.io/tls-acme: "true"
+  #   hosts:
+  #     - host: celery.backend.172.30.10.101.nip.io
+
+  #   tls: []
+  #   #  - secretName: chart-example-tls
+  #   #    hosts:
+  #   #      - chart-example.local
+
+  resources: 
+    requests:
+      cpu: 1.25
+      memory: 10G
+    limits:
+      cpu: 1.25
+      memory: 20G
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # To use GPU you need to install 
+    # https://github.com/NVIDIA/k8s-device-plugin) 
+    # on your k8s Cluster 
+    # limits:
+    #   nvidia.com/gpu: 2 # requesting 2 GPUs
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: 
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                    # Set this appropriately according to the release name
+                    # you choose for your installation.
+                  - deephealth-backend-celery
+
+
+# RabbitMQ settings. You can find all the available settings 
+# at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
+broker: &broker
+  nameOverride: "rabbitmq"
+
+  image:
+    debug: *debug
+    pullPolicy: *imagePullPolicy
+  
+  rabbitmq:
+    username: user
+    password: "anotherpassword"
+  
+  service:
+    port: 5672
+
+  persistence:
+    storageClass: *globalStorageClass
+    size: 1Gi
+  
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+# Copy broker properties as values of the subchart RabbitMQ
+rabbitmq: *broker
+
+
+# PostgreSQL settings.
+# You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
+postgresql:
+  # database name
+  postgresqlDatabase: db
+  # credentials
+  postgresqlUsername: postgres
+  postgresqlPassword: "dbpassword"
+  postgresqlPostgresPassword: "postgresUserPassword"
+
+  image:
+    debug: *debug
+
+  service:
+    port: 5432
+
+  persistence:
+    storageClass: *globalStorageClass
+    size: 1Gi
+
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+
+# Debug console settings
+console:
+  enabled: *debug
+  image:
+    repository: crs4/k8s-tools
+    tag: 1.3
+    pullPolicy: *imagePullPolicy
+  #   debug: *debug
+
+  replicaCount: 1
+  
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # To use GPU you need to install 
+    # https://github.com/NVIDIA/k8s-device-plugin) 
+    # on your k8s Cluster 
+    # limits:
+    #   nvidia.com/gpu: 2 # requesting 2 GPUs
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
