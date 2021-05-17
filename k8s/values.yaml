@@ -74,7 +74,17 @@ backend:
   allowedHosts: "*"
 
   # Cross-Origin Resource Sharing (CORS) whitelist
-  corsOriginWhiteList: ""
+
+  # Secrets to access social authentication providers
+  social_auth:
+    github:
+      client_id:
+      client_secret:
+
+  # Email settings
+  email:
+    user:
+    password:
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
