@@ -46,7 +46,7 @@ backend:
 
   image: &backend_image
     # repository: dhealth/backend
-    tag: 2fd828d8
+    tag: latest
 
   # service:
   #   type: NodePort
