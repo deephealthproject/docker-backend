@@ -1,6 +1,9 @@
 # Allow DEBUG mode. Don't run with debug turned on in production!
 DEBUG=${DEBUG}
 
+# Enable eddl CS_GPU computing service
+EDDL_WITH_CUDA=${EDDL_WITH_CUDA}
+
 # Set SECRET_KEY. Keep the secret key used in production secret!
 SECRET_KEY="${SECRET_KEY}"
 
