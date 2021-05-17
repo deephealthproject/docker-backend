@@ -56,7 +56,7 @@ backend:
 
   # number of replicas
   replicaCount: 1
-  
+
   # number of Gunicorn workers
   workers: 3
 
@@ -106,9 +106,9 @@ backend:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-    # To use GPU you need to install 
-    # https://github.com/NVIDIA/k8s-device-plugin) 
-    # on your k8s Cluster 
+    # To use GPU you need to install
+    # https://github.com/NVIDIA/k8s-device-plugin)
+    # on your k8s Cluster
     # limits:
     #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
@@ -124,11 +124,11 @@ nginx:
   nameOverride: "nginx"
 
   image:
-    # repository: 
+    # repository:
     # tag: latest
     pullPolicy: *imagePullPolicy
     debug: *debug
-  
+
   service:
     type: ClusterIP
     port: 80
@@ -148,7 +148,7 @@ nginx:
     #   kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
     # hosts:
-    #   - host: 
+    #   - host:
     #       name: pippo.backend.172.30.10.101.nip.io
     #       path: /
 
@@ -175,7 +175,7 @@ celery:
 
   acceptContent: 'json' # list of comma separated values
   taskSerializer: 'json'
-  
+
   service:
     # type: ClusterIP
     # port: 80
@@ -205,9 +205,9 @@ celery:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-    # To use GPU you need to install 
-    # https://github.com/NVIDIA/k8s-device-plugin) 
-    # on your k8s Cluster 
+    # To use GPU you need to install
+    # https://github.com/NVIDIA/k8s-device-plugin)
+    # on your k8s Cluster
     # limits:
     #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
@@ -218,7 +218,7 @@ celery:
   affinity: {}
 
 
-# RabbitMQ settings. You can find all the available settings 
+# RabbitMQ settings. You can find all the available settings
 # at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
 broker: &broker
   nameOverride: "rabbitmq"
@@ -226,11 +226,11 @@ broker: &broker
   image:
     debug: *debug
     pullPolicy: *imagePullPolicy
-  
+
   rabbitmq:
     username: user
     # password: password
-  
+
   service:
     port: 5672
 
@@ -242,7 +242,7 @@ broker: &broker
   rabbitmq:
     existingPasswordSecret: deephealth-backend-rabbitmq-secrets
     existingErlangSecret: deephealth-backend-rabbitmq-secrets
-  
+
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -319,7 +319,7 @@ console:
     debug: *debug
 
   replicaCount: 1
-  
+
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -331,9 +331,9 @@ console:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-    # To use GPU you need to install 
-    # https://github.com/NVIDIA/k8s-device-plugin) 
-    # on your k8s Cluster 
+    # To use GPU you need to install
+    # https://github.com/NVIDIA/k8s-device-plugin)
+    # on your k8s Cluster
     # limits:
     #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
