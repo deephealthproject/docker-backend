@@ -23,12 +23,9 @@ services:
     ports:
       - "${BACKEND_PORT}:8000"
     volumes:
-      ${BACKEND_VOLUME}
       - ./.config:/app/config
       - ./settings.conf:/app/settings.conf
-      - datasets:${DATASETS_DIR}
-      - training:${TRAINING_DIR}
-      - inference:${INFERENCE_DIR}
+      - data:${DATA_DIR}
     depends_on:
       - broker
       - db
@@ -48,12 +45,9 @@ services:
       - DATABASE_URL=psql://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@db:5432/${POSTGRESQL_DATABASE} # PostgreSQL DB
     command: ["start.sh","celery"]
     volumes:
-      ${BACKEND_VOLUME}
       - ./.config:/app/config
       - ./settings.conf:/app/settings.conf
-      - datasets:${DATASETS_DIR}
-      - training:${TRAINING_DIR}
-      - inference:${INFERENCE_DIR}
+      - data:${DATA_DIR}
     depends_on:
       - broker
       - db
@@ -65,7 +59,6 @@ services:
     environment:
       - PYTHONPATH="$PYTHONPATH:.%"
     volumes:
-      ${BACKEND_VOLUME}
       - ./.config:/app/config
       - ./settings.conf:/app/settings.conf
       - postgresql:/bitnami/postgresql
@@ -89,6 +82,4 @@ services:
 
 volumes:
   postgresql:
-  datasets:
-  inference:
-  training:
+  data:

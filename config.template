@@ -17,10 +17,9 @@ CORS_ORIGIN_WHITELIST="${CORS_ORIGIN_WHITELIST}"
 # Relative path for static resources
 STATIC_URL="${STATIC_URL}"
 
-# Data directories
-TRAINING_DIR="${TRAINING_DIR}"
-INFERENCE_DIR="${INFERENCE_DIR}"
-DATASETS_DIR="${DATASETS_DIR}"
+
+# Data directory
+DATA_DIR="${DATA_DIR}"
 
 # RabbitMQ Credentials
 # see https://hub.docker.com/_/rabbitmq

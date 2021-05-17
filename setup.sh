@@ -45,10 +45,7 @@ fi
 # build images
 docker-compose build \
   --build-arg DOCKER_LIBS_IMAGE="${DOCKER_LIBS_IMAGE:-}" \
-  --build-arg DATASETS_DIR="${DATASETS_DIR:-}" \
-  --build-arg TRAINING_DIR="${TRAINING_DIR:-}" \
-  --build-arg INFERENCE_DIR="${INFERENCE_DIR:-}"
-
+  --build-arg DATA_DIR="${DATA_DIR:-}"
 
 # clean up source
 #rm -rf docker/src
