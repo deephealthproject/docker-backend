@@ -21,7 +21,7 @@ services:
       - DATABASE_URL=psql://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@db:5432/${POSTGRESQL_DATABASE} # PostgreSQL DB
       - POSTGRESQL_HOST=db
     ports:
-      - "${BACKEND_PORT}:8000"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
       - ./.config:/app/config
       - ./settings.conf:/app/settings.conf
