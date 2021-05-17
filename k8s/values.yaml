@@ -59,7 +59,7 @@ backend:
   persistence:
     data:
       storageClass: *globalStorageClass
-      path: '/data'
+      path: "/data"
       size: 10Gi
       # existingClaim: datasets
     staticFiles:
@@ -157,6 +157,8 @@ nginx:
 
 # Celery settings
 celery:
+  acceptContent: "json" # list of comma separated values
+  taskSerializer: "json"
 
   service:
     # type: ClusterIP
