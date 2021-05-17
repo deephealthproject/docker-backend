@@ -18,8 +18,10 @@ CORS_ORIGIN_WHITELIST="${CORS_ORIGIN_WHITELIST}"
 # DATABASE_URL=psql://urser:un-githubbedpassword@127.0.0.1:8458/database # PostgreSQL DB
 
 # Relative path for static resources
-STATIC_URL="${STATIC_URL}"
+STATIC_URL='/backend/static/'
 
+# Base url to serve media files
+MEDIA_URL='/backend/media/'
 
 # Data directory
 DATA_DIR="${DATA_DIR}"
