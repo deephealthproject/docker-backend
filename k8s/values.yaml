@@ -45,8 +45,9 @@ backend:
   replicaCount: 1
 
   image: &backend_image
-    # repository: dhealth/backend
-    # tag: latest
+    repository: dhealth/backend
+    tag: 11f2b98
+    pullPolicy: *imagePullPolicy
 
   # service:
   #   type: NodePort
