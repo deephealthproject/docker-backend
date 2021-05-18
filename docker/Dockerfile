@@ -18,6 +18,10 @@ ENV APP_PATH "/app"
 ARG DATA_DIR="/data"
 ENV DATA_DIR=${DATA_DIR}
 
+# Locale settings
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
 # Copy source path
 COPY src ${APP_PATH}
 
