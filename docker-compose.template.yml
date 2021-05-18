@@ -12,7 +12,7 @@ services:
     restart: "no"
     user: "${UID}:${GID}"
     runtime: ${DOCKER_RUNTIME}
-    command: ["/bin/bash","-c","init.sh && start.sh backend"]
+    command: ["/bin/bash","-c","wait-for-postgres.sh && init.sh && start.sh backend"]
     env_file: &envfile
       - settings.conf
     environment:
