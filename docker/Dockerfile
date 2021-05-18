@@ -48,6 +48,7 @@ RUN \
                 /usr/local/bin/wait-for-postgres.sh \
     # install app requirements
     && pip --no-cache-dir install -r requirements.txt \
+    && pip --no-cache-dir install click==7.1.2 \
     # create the user
     && groupadd ${USERNAME} -g ${GID} || true \
     && useradd -m -u ${UID} -g ${GID} ${USERNAME} \
