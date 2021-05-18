@@ -17,10 +17,10 @@ spec:
         - name: wait-for-postgresql
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
-          command: 
+          command:
             - /bin/sh
             - -c
-            - until PGPASSWORD=${POSTGRES_PASSWORD} psql -h "{{ include "deephealth-backend.fullname" . }}-postgresql" -U "{{ .Values.postgresql.postgresqlUsername }}" {{ .Values.postgresql.postgresqlDatabase }} -c '\q'; do 
+            - until PGPASSWORD=${POSTGRES_PASSWORD} psql -h "{{ include "deephealth-backend.fullname" . }}-postgresql" -U "{{ .Values.postgresql.postgresqlUsername }}" {{ .Values.postgresql.postgresqlDatabase }} -c '\q'; do
                 >&2 echo "PostgreSQL is unavailable -- sleep 2 seconds and retry" ;
                 sleep 2 ;
               done ;

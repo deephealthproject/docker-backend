@@ -1,6 +1,9 @@
 # Allow DEBUG mode. Don't run with debug turned on in production!
 DEBUG=${DEBUG}
 
+# Enable eddl CS_GPU computing service
+EDDL_WITH_CUDA=${EDDL_WITH_CUDA}
+
 # Set SECRET_KEY. Keep the secret key used in production secret!
 SECRET_KEY="${SECRET_KEY}"
 
@@ -15,12 +18,13 @@ CORS_ORIGIN_WHITELIST="${CORS_ORIGIN_WHITELIST}"
 # DATABASE_URL=psql://urser:un-githubbedpassword@127.0.0.1:8458/database # PostgreSQL DB
 
 # Relative path for static resources
-STATIC_URL="${STATIC_URL}"
+STATIC_URL='/backend/static/'
 
-# Data directories
-TRAINING_DIR="${TRAINING_DIR}"
-INFERENCE_DIR="${INFERENCE_DIR}"
-DATASETS_DIR="${DATASETS_DIR}"
+# Base url to serve media files
+MEDIA_URL='/backend/media/'
+
+# Data directory
+DATA_DIR="${DATA_DIR}"
 
 # RabbitMQ Credentials
 # see https://hub.docker.com/_/rabbitmq
@@ -31,3 +35,10 @@ CELERY_ACCEPT_CONTENT="${CELERY_ACCEPT_CONTENT}" # list of comma separated value
 CELERY_RESULT_BACKEND="${CELERY_RESULT_BACKEND}"
 CELERY_TASK_SERIALIZER="${CELERY_TASK_SERIALIZER}"
 
+# OAuth settings
+DRFSO2_PROPRIETARY_BACKEND_NAME='GithubOAuth2'
+DRFSO2_URL_NAMESPACE='social'
+
+# GitHub configuration
+SOCIAL_AUTH_GITHUB_KEY=''
+SOCIAL_AUTH_GITHUB_SECRET=''

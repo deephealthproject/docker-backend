@@ -21,6 +21,16 @@ export SECRET_KEY=$(\
 docker run -it --rm "${DOCKER_BACKEND_IMAGE}" \
 python3 -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())' | tr -d '[:space:]')
 
+# Set Docker Runtime: runc | nvidia
+# The current implementation only support 'nvidia' runtime
+# Notice that to use GPUs you need to use the 'nvidia'
+# DOCKER_RUNTIME *and* use a GPU-enabled pylibs container image.
+DOCKER_RUNTIME=runc
+if [[ "${EDDL_WITH_CUDA}" == "True" ||  "${EDDL_WITH_CUDA}" == "true" ]]; then
+  DOCKER_RUNTIME=nvidia
+fi
+export DOCKER_RUNTIME
+
 # generate config file from settings
 envsubst < config.template > .config
 
@@ -45,10 +55,7 @@ fi
 # build images
 docker-compose build \
   --build-arg DOCKER_LIBS_IMAGE="${DOCKER_LIBS_IMAGE:-}" \
-  --build-arg DATASETS_DIR="${DATASETS_DIR:-}" \
-  --build-arg TRAINING_DIR="${TRAINING_DIR:-}" \
-  --build-arg INFERENCE_DIR="${INFERENCE_DIR:-}"
-
+  --build-arg DATA_DIR="${DATA_DIR:-}"
 
 # clean up source
 #rm -rf docker/src

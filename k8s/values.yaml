@@ -14,12 +14,10 @@ global:
   # preserve PVC when a release is deleted
   retainPVCs: True
 
-
 # ServiceType of the Back-end EndPoint
 # endpoint:
 #   service:
 #     type: NodePort
-
 
 # Set external access to the services
 # ingress:
@@ -28,14 +26,14 @@ global:
 #     kubernetes.io/ingress.class: nginx
 #     # kubernetes.io/tls-acme: "true"
 #   hosts:
-#     - host: backend.172.30.10.101.nip.io
+#     - host: backend.172.30.10.100.nip.io
 #       serviceName: endpoint # service name without ReleasePrefix
 #       servicePort: 80
 
 #   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+#  - secretName: chart-example-tls
+#    hosts:
+#      - chart-example.local
 
 # Backend settings
 backend:
@@ -47,8 +45,9 @@ backend:
   replicaCount: 1
 
   image: &backend_image
-    # repository: dhealth/backend
-    tag: 2fd828d8
+    repository: dhealth/backend
+    tag: 11f2b98
+    pullPolicy: *imagePullPolicy
 
   # service:
   #   type: NodePort
@@ -61,7 +60,7 @@ backend:
   persistence:
     data:
       storageClass: *globalStorageClass
-      path: '/data'
+      path: "/data"
       size: 10Gi
       # existingClaim: datasets
     staticFiles:
@@ -74,9 +73,21 @@ backend:
   allowedHosts: "*"
 
   # Cross-Origin Resource Sharing (CORS) whitelist
-  corsOriginWhiteList: ""
 
-  resources: {}
+  # Secrets to access social authentication providers
+  social_auth:
+    github:
+      client_id:
+      client_secret:
+
+  # Email settings
+  email:
+    user:
+    password:
+
+  # Configure pod resources
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -87,9 +98,9 @@ backend:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-    # To use GPU you need to install 
-    # https://github.com/NVIDIA/k8s-device-plugin) 
-    # on your k8s Cluster 
+    # To use GPU you need to install
+    # https://github.com/NVIDIA/k8s-device-plugin)
+    # on your k8s Cluster
     # limits:
     #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
@@ -99,14 +110,13 @@ backend:
 
   affinity: {}
 
-
 # nginx settings
 nginx:
   nameOverride: "nginx"
 
   image:
     debug: *debug
-  
+
   # service:
   #   type: NodePort
   #   port: 80
@@ -115,16 +125,15 @@ nginx:
   #serverBlockConfigMap: proxy-config
   # serverDataVolumeClaim: static-files
   # serverDataVolumePath: /app/static
-  
 
   ingress:
     # enabled: false
     # hostname: nginx.backend.172.30.10.101.nip.io
     # annotations:
     #   kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    # kubernetes.io/tls-acme: "true"
     # hosts:
-    #   - host: 
+    #   - host:
     #       name: pippo.backend.172.30.10.101.nip.io
     #       path: /
 
@@ -134,7 +143,8 @@ nginx:
     #    hosts:
     #      - chart-example.local
 
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -148,10 +158,9 @@ nginx:
 
 # Celery settings
 celery:
+  acceptContent: "json" # list of comma separated values
+  taskSerializer: "json"
 
-  acceptContent: 'json' # list of comma separated values
-  taskSerializer: 'json'
-  
   service:
     # type: ClusterIP
     # port: 80
@@ -170,7 +179,8 @@ celery:
   #   #    hosts:
   #   #      - chart-example.local
 
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -181,9 +191,9 @@ celery:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-    # To use GPU you need to install 
-    # https://github.com/NVIDIA/k8s-device-plugin) 
-    # on your k8s Cluster 
+    # To use GPU you need to install
+    # https://github.com/NVIDIA/k8s-device-plugin)
+    # on your k8s Cluster
     # limits:
     #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
@@ -193,19 +203,18 @@ celery:
 
   affinity: {}
 
-
-# RabbitMQ settings. You can find all the available settings 
+# RabbitMQ settings. You can find all the available settings
 # at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
 broker: &broker
   nameOverride: "rabbitmq"
 
   image:
     debug: *debug
-  
+
   rabbitmq:
     username: user
     # password: password
-  
+
   service:
     port: 5672
 
@@ -213,7 +222,7 @@ broker: &broker
     storageClass: *globalStorageClass
     size: 1Gi
     # existingClaim: ""
-  
+
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -234,7 +243,6 @@ broker: &broker
 
 # Copy broker properties as values of the subchart RabbitMQ
 rabbitmq: *broker
-
 
 # PostgreSQL settings.
 # You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
@@ -275,7 +283,6 @@ postgresql:
 
   affinity: {}
 
-
 # Debug console settings
 console:
   enabled: *debug
@@ -286,8 +293,9 @@ console:
   #   debug: *debug
 
   replicaCount: 1
-  
-  resources: {}
+
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -298,9 +306,9 @@ console:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-    # To use GPU you need to install 
-    # https://github.com/NVIDIA/k8s-device-plugin) 
-    # on your k8s Cluster 
+    # To use GPU you need to install
+    # https://github.com/NVIDIA/k8s-device-plugin)
+    # on your k8s Cluster
     # limits:
     #   nvidia.com/gpu: 2 # requesting 2 GPUs
 
