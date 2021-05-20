@@ -15,8 +15,6 @@ Keep on reading to see how to [deploy on Kubernetes](#deploy-on-kubernetes) or h
 ### Requirements
 
 *  Kubernetes volume provisioner with support for `ReadWriteMany` *access mode* (e.g., **Ceph**, **NFS**, etc.)
-*  **Helm 2**
-
 
 
 ### Installation
