@@ -125,12 +125,16 @@ The following tables lists the main configurable parameters of the `deephealth-b
 | `backend.nodeSelector`                        | Node labels for pod assignment of the backend server replicas                                 |  `nil`                                        |
 | `backend.tolerations`                         | Tolerations labels for pod assignment of the backend server repliacas                         |  `nil`                                        |
 | `backend.affinity`                            | Affinity labels for pod assignment of the backend server replicas                             |  `nil`                                        |
+| `backend.podLabels`                           | Extra labels for backend pods                                                                 |  `nil`                                        |
+| `backend.podSecurityContext`                  | Backend pods' security context                                                                |  `nil`                                        |
 | `celery.acceptContent`                        | A list of comma-separated content-types to allow on Celery workers                            |  `json`                                       |
 | `celery.taskSerializer`                       | A list of comma-separated serializers to allow on Celery workers                              |  `json`                                       |
 | `celery.resources`                            | CPU/Memory resource requests/limits of the celery worker replicas                             |  `nil`                                        |
 | `celery.nodeSelector`                         | Node labels for pod assignment of the celery worker replicas                                  |  `nil`                                        |
 | `celery.tolerations`                          | Tolerations labels for pod assignment of the celery worker replicas                           |  `nil`                                        |
 | `celery.affinity`                             | Affinity labels for pod assignment of the celery worker replicas                              |  `nil`                                        |
+| `celery.podLabels`                            | Extra labels for celery pods                                                                  |  `nil`                                        |
+| `celery.podSecurityContext`                   | Celery pods' security context                                                                 |  `nil`                                        |
 | `broker.persistence.storageClass`             | Storage class used by RabbitMQ broker                                                         |  `*globalStorageClass`                        |
 | `broker.persistence.size`                     | Size of the datasets volume                                                                   |  `1Gi`                                        |
 | `postgresql.postgresqlPostgresPassword`       | PostgreSQL admin password (used when `postgresqlUsername` is not `postgres`)                  | _random 10 character alphanumeric string_     |
