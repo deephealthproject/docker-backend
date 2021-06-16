@@ -82,7 +82,7 @@ Define admin credentials via environment variables.
     secretKeyRef:
       name: {{ include "deephealth-backend.django.secretName" . }}
       key: adminPassword
-{{- if .Values.backend.admin.email -}}
+{{- if .Values.backend.admin.email }}
 - name: ADMIN_EMAIL
   valueFrom:
     secretKeyRef:
