@@ -21,7 +21,16 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "deephealth-backend.name" . }}-backend
         app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- with .Values.backend.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
+      {{- if .Values.backend.podSecurityContext }}
+      securityContext:
+        {{- with .Values.backend.podSecurityContext }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
       initContainers:
         - name: init
           image: "crs4/k8s-wait-for:latest"
