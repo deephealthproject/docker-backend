@@ -88,6 +88,27 @@ ingress:
     - host: backend.172.30.20.10.nip.io
 ```
 
+### Distributing workers over nodes (anti-affinity)
+
+You can use Kubernetes anti-affinity to avoid having more than one worker
+scheduled on the same node.  Configure the pod affinity as in this example in
+the `celery` section.  **Note** that the value must match your release's celery pod
+names!
+
+
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - deephealth-backend-celery
+
 
 
 ### Parameters

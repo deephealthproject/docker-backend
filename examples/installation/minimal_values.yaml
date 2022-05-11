@@ -1,0 +1,41 @@
+# Example chart values for a deployment of the Deephealth back-end
+#
+# This is a YAML-formatted file.  See the chart documentation
+# for a full explanation of the meaning of the various properties.
+
+# global settings
+global:
+  debug: &debug False
+  # persistence class used by services.  To be used by backend
+  # and celery workers it must support RWX access.
+  storageClass: &globalStorageClass "csi-cephfs"
+  # preserve secrets when a release is deleted
+  retainSecrets: False
+  # preserve PVC when a release is deleted
+  retainPVCs: True
+
+# Backend.  The web service contacted by the users.
+backend:
+  admin:
+    password: "yourfancypassword"
+
+
+# RabbitMQ settings. You can find all the available settings 
+# at https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq
+broker: &broker
+  rabbitmq:
+    password: "anotherpassword"
+
+
+# Copy broker properties as values of the subchart RabbitMQ
+rabbitmq: *broker
+
+
+# PostgreSQL settings.
+# You can find all the available settings at https://github.com/bitnami/charts/tree/master/bitnami/postgresql
+postgresql:
+  # credentials
+  postgresqlUsername: postgres
+  postgresqlPassword: "dbpassword"
+  postgresqlPostgresPassword: "postgresUserPassword"
+
