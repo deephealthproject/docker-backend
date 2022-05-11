@@ -1,4 +1,4 @@
-[![release](https://img.shields.io/github/v/release/deephealthproject/docker-backend)](https://github.com/deephealthproject/ecvl/releases/latest/)
+[![release](https://img.shields.io/github/v/release/deephealthproject/docker-backend)](https://github.com/deephealthproject/docker-backend/releases/latest/)
 [![license](https://img.shields.io/github/license/deephealthproject/docker-backend)](https://github.com/deephealthproject/docker-backend/blob/master/LICENSE)
 
 # docker-backend
