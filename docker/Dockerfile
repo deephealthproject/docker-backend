@@ -37,7 +37,7 @@ WORKDIR ${APP_PATH}
 # Update env and system software
 RUN \
     apt-get update -y -q \
-    && apt-get install -y --no-install-recommends libpq-dev postgresql-client \
+    && apt-get install -y --no-install-recommends libpq-dev postgresql-client graphviz libgraphviz-dev \
     && apt-get clean \
     # set python3 as default Python interpreter
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 10\
